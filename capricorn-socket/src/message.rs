@@ -1,14 +1,14 @@
 use actix::prelude::*;
 
-/// 文字消息
+/// text message
 #[derive(Clone, Message)]
 #[rtype(result = "()")]
 pub struct TextMessage(pub String);
-///加入群组
+///Join in room
 #[derive(Clone, Message)]
 #[rtype(result = "usize")]
 pub struct JoinRoom(pub String, pub Option<String>, pub Recipient<TextMessage>);
-/// 退出群
+/// Leave out Room
 #[derive(Clone, Message)]
 #[rtype(result = "()")]
 pub struct LeaveRoom(pub String, pub usize);
