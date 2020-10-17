@@ -43,11 +43,9 @@ async fn send<'a>(redis: Cache, command: RespValue) -> Result<String, ServiceErr
 #[allow(dead_code)]
 #[feature("redis")]
 pub fn add_cache(cfg: &mut ServiceConfig) {
-    if let Some(redis_url) = &CONFIG.redis_url {
-        if !redis_url.is_empty() {
-            let cache = RedisActor::start(redis_url);
-            cfg.data(cache);
-        }
+    if !&CONFIG.redis_url.is_empty() {
+        let cache = RedisActor::start(&CONFIG.redis_url);
+        cfg.data(cache);
     }
 }
 
@@ -56,13 +54,13 @@ mod tests {
     use super::*;
 
     fn get_cache() -> Cache {
-        let cache = RedisActor::start(&CONFIG.redis_url.unwrap());
+        let cache = RedisActor::start(&CONFIG.redis_url);
         Data::new(cache)
     }
 
     #[actix_rt::test]
     async fn it_creates_new_application_cache_and_sets_and_reads_it() {
-        if !&CONFIG.redis_url.unwrap().is_empty() {
+        if !&CONFIG.redis_url.is_empty() {
             let cache = get_cache();
             set(cache.clone(), "testing", "123").await.unwrap();
             let value = get(cache, "testing").await.unwrap();
@@ -74,7 +72,7 @@ mod tests {
 
     #[actix_rt::test]
     async fn it_removes_an_entry_in_application_cache() {
-        if !&CONFIG.redis_url.unwrap().is_empty() {
+        if !&CONFIG.redis_url.is_empty() {
             let cache = get_cache();
             set(cache.clone(), "testing", "123").await.unwrap();
             let value = get(cache.clone(), "testing").await.unwrap();

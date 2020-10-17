@@ -16,12 +16,10 @@ pub struct Config {
     // pub database_url: String,
     pub jwt_expiration: i64,
     pub jwt_key: String,
-    pub redis_url: Option<String>,
+    pub redis_url: String,
     pub backtrace: u8,
     pub log: String,
     pub server: String,
-    pub wechat_appid: String,
-    pub wechat_secret: String,
 }
 
 /// js toISOString() in test suit can't handle chrono's default precision
