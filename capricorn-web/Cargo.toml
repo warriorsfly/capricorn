@@ -8,15 +8,16 @@ edition = "2018"
 
 [dependencies]
 actix = "0.10"
-actix-cors = "0.4"
+actix-cors = "0.5"
 actix-web = "3"
 actix-web-actors = "3"
 actix-files = "0.4"
 actix-codec = "0.3"
 actix-redis = {version="0.9",optional = true}
+juniper = "0.14"
 rand = "0.7"
 redis-async = { version = "0.6", optional = true }
-bytes = "0.5"
+bytes = "0.6"
 byteorder = "1"
 
 derive_more = "0.99"
@@ -30,9 +31,20 @@ serde = "1"
 serde_derive = "1"
 serde_json = "1"
 
+[dependencies.sqlx]
+version = "0.3"
+default-features = false
+features = [ "runtime-tokio", "macros", "chrono", "bigdecimal", "uuid", "json" ]
+
 [dev-dependencies]
 actix-rt = "1"
 
+
+[features]
+default = [ "postgres" ]
+postgres = [ "sqlx/postgres"]
+sqlite = [ "sqlx/sqlite"]
+mysql = [ "sqlx/mysql"]
 # [features]
 # default = ["extras"]
 # extras=["redis"]
