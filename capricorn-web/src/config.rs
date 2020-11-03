@@ -13,7 +13,7 @@ use serde::Deserialize;
 #[derive(Clone, Deserialize, Debug)]
 pub struct Config {
     pub auth_salt: String,
-    // pub database_url: String,
+    pub database_url: String,
     pub jwt_expiration: i64,
     pub jwt_key: String,
     pub redis_url: String,
