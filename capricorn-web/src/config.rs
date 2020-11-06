@@ -16,14 +16,10 @@ pub struct Config {
     pub database_url: String,
     pub jwt_expiration: i64,
     pub jwt_key: String,
-    pub redis_url: String,
     pub backtrace: u8,
     pub log: String,
     pub server: String,
 }
-
-/// js toISOString() in test suit can't handle chrono's default precision
-pub const DATE_FORMAT: &str = "%Y-%m-%dT%H:%M:%S%.3fZ";
 
 lazy_static! {
     pub static ref CONFIG: Config = get_config();

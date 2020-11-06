@@ -1,17 +1,18 @@
-use async_graphql::{Context, Object};
+use async_graphql::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, PartialEq, Serialize)]
+use crate::database::Pool;
+
+#[derive(sqlx::FromRow, Debug, Deserialize, PartialEq, Serialize)]
 pub struct User {
-    id: String,
+    id: i32,
     empi: String,
-    #[serde(rename = "XM")]
     name: String,
 }
 
 #[Object]
 impl User {
-    async fn id(&self) -> &str {
+    async fn id(&self) -> &i32 {
         &self.id
     }
 
@@ -28,9 +29,11 @@ pub struct QueryRoot;
 
 #[Object]
 impl QueryRoot {
-    async fn users(&self, ctx: &Context<'_>) -> Vec<User> {
-        sqlx::query!(r#"select * from JBXX_INDEX"#)
-            .fetch_all(ctx.data())
+    async fn users(&self, ctx: &Context<'_>) -> Result<Vec<User>> {
+        let pool = ctx.data_unchecked::<Pool>();
+        sqlx::query_as::<_, User>("select * from jbxx_index")
+            .fetch_all(pool)
             .await
+            .map_err(|error| Error::from(error))
     }
 }
