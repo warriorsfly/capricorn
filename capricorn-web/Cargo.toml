@@ -13,11 +13,10 @@ actix-web = "3"
 actix-web-actors = "3"
 actix-files = "0.4"
 actix-codec = "0.3"
-actix-redis = {version="0.9",optional = true}
-juniper = "0.14"
-juniper-actix = "0.14"
+async-graphql = "2"
+async-graphql-actix-web = "2"
 rand = "0.7"
-redis-async = { version = "0.7", optional = true }
+# redis-async = { version = "0.7", optional = true }
 bytes = "0.6"
 byteorder = "1"
 
@@ -39,13 +38,3 @@ features = [ "macros", "runtime-actix", "postgres", "migrate", "json", "chrono",
 
 [dev-dependencies]
 actix-rt = "1"
-
-
-[features]
-default = ["redis" ]
-redis=["actix-redis","redis-async"]
-# [features]
-# default = ["extras"]
-# extras=["redis"]
-# # use redis or not
-# redis=["actix-redis","redis-async"]

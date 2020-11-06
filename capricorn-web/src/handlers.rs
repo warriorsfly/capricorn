@@ -1,40 +1,34 @@
-use actix_web::{web, Error, HttpResponse};
-use juniper::{graphiql::graphiql_source, http::GraphQLRequest};
-
-use crate::{
-    database::Pool,
-    schemas::root::{create_schema, Context, Schema},
+use actix_web::{web, HttpRequest, HttpResponse, Result};
+use actix_web_actors::ws;
+use async_graphql::{
+    http::{playground_source, GraphQLPlaygroundConfig},
+    Schema,
 };
+use async_graphql_actix_web::{Request, Response, WSSubscription};
 
-pub async fn graphql(
-    pool: web::Data<Pool>,
-    schema: web::Data<Schema>,
-    request: web::Json<GraphQLRequest>,
-) -> Result<HttpResponse, Error> {
-    let ctx = Context {
-        pool: pool.get_ref().to_owned(),
-    };
-    let res = web::block(move || {
-        let res = request.execute(&schema, &ctx);
-        Ok::<_, serde_json::error::Error>(serde_json::to_string(&res)?)
-    })
-    .await
-    .map_err(Error::from)?;
+use crate::schemas::IndexSchema;
 
+pub async fn index(schema: web::Data<IndexSchema>, request: Request) -> Response {
+    schema.execute(request.into_inner()).await.into()
+}
+
+pub async fn index_playground() -> Result<HttpResponse> {
     Ok(HttpResponse::Ok()
-        .content_type("application/json")
-        .body(res))
-}
-
-pub async fn graphql_playground() -> HttpResponse {
-    HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(graphiql_source("/graphql"))
+        .body(playground_source(
+            GraphQLPlaygroundConfig::new("/").subscription_endpoint("/"),
+        )))
 }
 
-pub fn add_graphql(config: &mut web::ServiceConfig) {
-    config
-        .data(create_schema())
-        .route("/graphql", web::post().to(graphql))
-        .route("/graphiql", web::get().to(graphql_playground));
+pub async fn index_ws(
+    schema: web::Data<IndexSchema>,
+    req: HttpRequest,
+    payload: web::Payload,
+) -> Result<HttpResponse> {
+    ws::start_with_protocols(
+        WSSubscription::new(Schema::clone(&*schema)),
+        &["graphql-ws"],
+        &req,
+        payload,
+    )
 }

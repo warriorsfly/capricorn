@@ -1,7 +1,7 @@
-pub mod account;
-pub mod application;
-pub mod company;
-pub mod developer;
-pub mod message;
-pub mod root;
+use async_graphql::{EmptyMutation, EmptySubscription, Schema};
+
+use self::user::QueryRoot;
+
 pub mod user;
+
+pub type IndexSchema = Schema<QueryRoot, EmptyMutation, EmptySubscription>;

@@ -1,37 +1,36 @@
-use crate::schemas::root::Context;
+use async_graphql::{Context, Object};
+use serde::{Deserialize, Serialize};
 
-#[derive(Default, Debug)]
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub struct User {
-    pub id: String,
-    pub email: String,
-    pub phone: String,
-    pub user_name: String,
-    pub nick_name: String,
-    // pub avatar_small: String,
-    // pub avatar_medium: String,
-    // pub avatar_large: String,
-    // company: Option<Company>,
-    // developer: Option<Developer>,
+    id: String,
+    empi: String,
+    #[serde(rename = "XM")]
+    name: String,
 }
 
-#[juniper::object(Context = Context)]
+#[Object]
 impl User {
-    fn id(&self) -> &str {
+    async fn id(&self) -> &str {
         &self.id
     }
 
-    fn email(&self) -> &str {
-        &self.email
+    async fn empi(&self) -> &str {
+        &self.empi
     }
 
-    fn phone(&self) -> &str {
-        &self.phone
+    async fn name(&self) -> &str {
+        &self.name
     }
-    fn user_name(&self) -> &str {
-        &self.user_name
-    }
+}
 
-    fn nick_name(&self) -> &str {
-        &self.nick_name
+pub struct QueryRoot;
+
+#[Object]
+impl QueryRoot {
+    async fn users(&self, ctx: &Context<'_>) -> Vec<User> {
+        sqlx::query!(r#"select * from JBXX_INDEX"#)
+            .fetch_all(ctx.data())
+            .await
     }
 }
