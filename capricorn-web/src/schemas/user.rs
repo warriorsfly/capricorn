@@ -36,4 +36,13 @@ impl QueryRoot {
             .await
             .map_err(|error| Error::from(error))
     }
+
+    async fn user(&self, ctx: &Context<'_>, empi: String) -> Result<User> {
+        let pool = ctx.data_unchecked::<Pool>();
+        sqlx::query_as::<_, User>("select * from jbxx_index where empi = ?")
+            .bind(empi)
+            .fetch_one(pool)
+            .await
+            .map_err(|error| Error::from(error))
+    }
 }

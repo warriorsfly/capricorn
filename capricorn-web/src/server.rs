@@ -20,8 +20,6 @@ pub async fn serv() -> std::io::Result<()> {
             .data(schema.clone())
             // 注册路由
             .configure(routes)
-        // 添加状态
-        // .app_data(data.clone())
     });
 
     serve.bind(&CONFIG.server)?.run().await
