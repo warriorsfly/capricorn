@@ -21,6 +21,7 @@ bytes = "0.6"
 byteorder = "1"
 
 derive_more = "0.99"
+diesel = { version = "1", features = ["chrono", "postgres", "r2d2", "serde_json"] }
 dotenv = "0.15"
 envy = "0.4"
 # env_logger = "0.7"
@@ -30,11 +31,6 @@ lazy_static = "1"
 serde = "1"
 serde_derive = "1"
 serde_json = "1"
-
-[dependencies.sqlx]
-version = "0.4.0-beta.1"
-default-features = false
-features = [ "macros", "runtime-actix", "postgres", "migrate", "json", "chrono", "uuid" ]
 
 [dev-dependencies]
 actix-rt = "1"
