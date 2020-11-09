@@ -23,9 +23,9 @@ table! {
 }
 
 table! {
-    users (id) {
+    providers (id) {
         id -> Int4,
-        username -> Varchar,
+        name -> Varchar,
         email -> Varchar,
         password -> Text,
         avatar -> Text,
@@ -34,10 +34,10 @@ table! {
     }
 }
 
-joinable!(applications -> users (provider));
+joinable!(applications -> providers (provider));
 
 allow_tables_to_appear_in_same_query!(
     applications,
     jbxx_index,
-    users,
+    providers,
 );

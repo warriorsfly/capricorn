@@ -2,7 +2,7 @@ use crate::{database::DatabasePool, schema::*};
 use diesel::prelude::*;
 use juniper::{object, FieldResult, RootNode};
 
-use super::user::User;
+use super::provider::Provider;
 pub struct Context {
     pub database_pool: DatabasePool,
 }
@@ -14,10 +14,10 @@ pub struct QueryRoot;
 #[object(Context=Context)]
 impl QueryRoot {
     #[graphql(description = "List of all users")]
-    fn users(ctx: &Context) -> FieldResult<Vec<User>> {
+    fn providers(ctx: &Context) -> FieldResult<Vec<Provider>> {
         let conn = &ctx.database_pool.get()?;
-        let users = users::table.load::<User>(conn)?;
-        Ok(users)
+        let providers = providers::table.load::<Provider>(conn)?;
+        Ok(providers)
     }
 }
 

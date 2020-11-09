@@ -6,9 +6,9 @@ use juniper::{object, FieldResult};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Queryable, Identifiable, PartialEq, Serialize)]
-pub struct User {
+pub struct Provider {
     pub id: i32,
-    pub username: String,
+    pub name: String,
     pub email: String,
     #[serde(skip_serializing)]
     pub password: String,
@@ -18,13 +18,13 @@ pub struct User {
 }
 
 #[object(Context=Context)]
-impl User {
+impl Provider {
     fn id(&self) -> &i32 {
         &self.id
     }
 
-    fn username(&self) -> &str {
-        &self.username
+    fn name(&self) -> &str {
+        &self.name
     }
 
     fn email(&self) -> &str {

@@ -1,3 +1,3 @@
 pub mod application;
+pub mod provider;
 pub mod root;
-pub mod user;
