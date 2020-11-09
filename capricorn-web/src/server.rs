@@ -1,4 +1,6 @@
-use crate::{awc::add_awc, config::CONFIG, routes::routes};
+use crate::{
+    awc::add_awc, config::CONFIG, database::add_pool, handlers::add_graphql, routes::routes,
+};
 
 use actix_web::{middleware::Logger, App, HttpServer};
 
@@ -6,8 +8,8 @@ pub async fn serv() -> std::io::Result<()> {
     dotenv::dotenv().ok();
     let serve = HttpServer::new(move || {
         App::new()
-            // 添加缓存
-            // .configure(add_cache)
+            .configure(add_pool)
+            .configure(add_graphql)
             // 添加awc
             .configure(add_awc)
             // 添加跨域

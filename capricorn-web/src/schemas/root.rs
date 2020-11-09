@@ -1,6 +1,6 @@
 use crate::{database::DatabasePool, schema::*};
 use diesel::prelude::*;
-use juniper::{object, FieldResult};
+use juniper::{object, FieldResult, RootNode};
 
 use super::user::User;
 pub struct Context {
@@ -15,8 +15,19 @@ pub struct QueryRoot;
 impl QueryRoot {
     #[graphql(description = "List of all users")]
     fn users(ctx: &Context) -> FieldResult<Vec<User>> {
-        let conn = ctx.database_pool.get()?;
-        let users = users::table::get_results::<User>(conn)?;
+        let conn = &ctx.database_pool.get()?;
+        let users = users::table.load::<User>(conn)?;
         Ok(users)
     }
+}
+
+pub struct MutationRoot;
+
+#[object(Context=Context)]
+impl MutationRoot {}
+
+pub type Schema = RootNode<'static, QueryRoot, MutationRoot>;
+
+pub fn init_schema() -> Schema {
+    Schema::new(QueryRoot, MutationRoot)
 }
