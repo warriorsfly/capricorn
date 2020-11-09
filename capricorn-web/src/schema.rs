@@ -9,7 +9,7 @@ table! {
 table! {
     users (id) {
         id -> Int4,
-        user_name -> Varchar,
+        username -> Varchar,
         email -> Varchar,
         password -> Text,
         avatar -> Text,

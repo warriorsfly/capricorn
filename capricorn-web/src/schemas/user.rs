@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Deserialize, Queryable, Identifiable, PartialEq, Serialize)]
 pub struct User {
     pub id: i32,
-    pub user_name: String,
+    pub username: String,
     pub email: String,
     #[serde(skip_serializing)]
     pub password: String,
@@ -23,7 +23,7 @@ impl User {
     }
 
     fn user_name(&self) -> &str {
-        &self.user_name
+        &self.username
     }
 
     fn email(&self) -> &str {
