@@ -1,10 +1,10 @@
 #[macro_use]
+extern crate diesel;
+
+#[macro_use]
 extern crate lazy_static;
 #[macro_use]
 extern crate serde_derive;
-
-#[macro_use]
-extern crate diesel;
 
 mod awc;
 mod config;
@@ -12,6 +12,7 @@ mod database;
 mod errors;
 mod handlers;
 mod routes;
+mod schema;
 mod schemas;
 mod server;
 mod state;

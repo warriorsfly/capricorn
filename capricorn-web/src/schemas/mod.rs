@@ -1,1 +1,2 @@
-use crate::{config::CONFIG, database::init_pool};
+pub mod root;
+pub mod user;
