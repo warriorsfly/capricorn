@@ -2,7 +2,7 @@ use crate::{
     awc::add_awc, config::CONFIG, database::add_pool, handlers::add_graphql, routes::routes,
 };
 
-use actix_web::{middleware::Logger, App, HttpServer};
+use actix_web::{middleware::Logger, web, App, HttpServer};
 
 pub async fn serv() -> std::io::Result<()> {
     dotenv::dotenv().ok();
@@ -18,8 +18,7 @@ pub async fn serv() -> std::io::Result<()> {
             .wrap(Logger::default())
             // 连接graphql
             .configure(add_graphql)
-            // 注册路由
-            .configure(routes)
+            .default_service(web::to(|| async { "404" }))
     });
 
     serve.bind(&CONFIG.server)?.run().await

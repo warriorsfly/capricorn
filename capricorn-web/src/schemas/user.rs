@@ -1,7 +1,8 @@
-use super::root::Context;
+use super::{application::Application, root::Context};
 use crate::schema::*;
 use chrono::{DateTime, Utc};
-use juniper::object;
+use diesel::prelude::*;
+use juniper::{object, FieldResult};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Queryable, Identifiable, PartialEq, Serialize)]
@@ -32,5 +33,15 @@ impl User {
 
     fn avatar(&self) -> &str {
         &self.avatar
+    }
+
+    fn applications(&self, ctx: &Context) -> FieldResult<Vec<Application>> {
+        use crate::schema::applications::dsl::*;
+        let conn = ctx.database_pool.get()?;
+
+        let apps = applications
+            .filter(provider.eq(self.id))
+            .load::<Application>(&conn)?;
+        Ok(apps)
     }
 }

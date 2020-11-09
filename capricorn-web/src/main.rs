@@ -9,7 +9,6 @@ extern crate serde_derive;
 mod awc;
 mod config;
 mod database;
-mod errors;
 mod handlers;
 mod routes;
 mod schema;
