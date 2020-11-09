@@ -8,15 +8,16 @@ pub async fn serv() -> std::io::Result<()> {
     dotenv::dotenv().ok();
     let serve = HttpServer::new(move || {
         App::new()
+            // 连接数据库
             .configure(add_pool)
-            .configure(add_graphql)
             // 添加awc
             .configure(add_awc)
             // 添加跨域
             // .wrap(Cors::default().supports_credentials())
             // 添加日志
             .wrap(Logger::default())
-            // 连接数据库
+            // 连接graphql
+            .configure(add_graphql)
             // 注册路由
             .configure(routes)
     });
