@@ -22,7 +22,7 @@ impl User {
         &self.id
     }
 
-    fn user_name(&self) -> &str {
+    fn username(&self) -> &str {
         &self.username
     }
 

@@ -26,6 +26,11 @@ pub struct MutationRoot;
 #[object(Context=Context)]
 impl MutationRoot {}
 
+pub struct Subscription;
+
+#[object(Context=Context)]
+impl Subscription {}
+
 pub type Schema = RootNode<'static, QueryRoot, MutationRoot>;
 
 pub fn init_schema() -> Schema {
