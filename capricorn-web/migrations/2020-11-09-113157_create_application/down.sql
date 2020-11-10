@@ -1,1 +1,1 @@
-drop table applications;
+drop table service_applications;

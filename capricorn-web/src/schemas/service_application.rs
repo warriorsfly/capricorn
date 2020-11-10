@@ -5,7 +5,7 @@ use juniper::object;
 use serde::{Deserialize, Serialize};
 use uuid;
 #[derive(Debug, Deserialize, Queryable, Identifiable, PartialEq, Serialize)]
-pub struct Application {
+pub struct ServiceApplication {
     pub id: uuid::Uuid,
     pub provider: i32,
     pub slug: String,
@@ -20,7 +20,7 @@ pub struct Application {
 }
 
 #[object(Context=Context)]
-impl Application {
+impl ServiceApplication {
     fn id(&self) -> String {
         (&self.id.to_simple().to_string()).to_owned()
     }
