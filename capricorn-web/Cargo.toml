@@ -8,33 +8,33 @@ edition = "2018"
 
 [dependencies]
 actix = "0.10"
-actix-cors = "0.4"
+actix-cors = "0.5"
 actix-web = "3"
 actix-web-actors = "3"
 actix-files = "0.4"
 actix-codec = "0.3"
-actix-redis = {version="0.9",optional = true}
-rand = "0.7"
-redis-async = { version = "0.6", optional = true }
-bytes = "0.5"
-byteorder = "1"
-
+chrono ={version = "0.4",features = ["serde"]}
+# redis-async = { version = "0.7", optional = true }
 derive_more = "0.99"
+diesel = {git = "https://github.com/diesel-rs/diesel", features = ["chrono", "postgres", "r2d2", "serde_json","uuid"]}
 dotenv = "0.15"
 envy = "0.4"
 # env_logger = "0.7"
 futures = "0.3"
 # jsonwebtoken = "7"
+juniper={git = "https://github.com/graphql-rust/juniper"}
+juniper_actix={git = "https://github.com/graphql-rust/juniper"}
 lazy_static = "1"
+rand = "0.7"
 serde = "1"
 serde_derive = "1"
 serde_json = "1"
+slug="0.1"
+
+uuid = { version = "0.8", features = ["serde", "v4"] }
+
+validator = "0.11"
+validator_derive = "0.11"
 
 [dev-dependencies]
 actix-rt = "1"
-
-# [features]
-# default = ["extras"]
-# extras=["redis"]
-# # use redis or not
-# redis=["actix-redis","redis-async"]

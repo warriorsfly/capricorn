@@ -1,9 +1,8 @@
 #[macro_use]
 extern crate serde_derive;
 
-mod frame;
 mod message;
-mod model;
+mod server;
 mod session;
 
 #[cfg(test)]

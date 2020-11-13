@@ -1,16 +1,18 @@
 #[macro_use]
-extern crate lazy_static;
+extern crate diesel;
+
 #[macro_use]
-extern crate redis_async;
+extern crate lazy_static;
 #[macro_use]
 extern crate serde_derive;
 
 mod awc;
-mod cache;
 mod config;
-mod errors;
+mod database;
 mod handlers;
 mod routes;
+mod schema;
+mod schemas;
 mod server;
 mod state;
 mod tests;
