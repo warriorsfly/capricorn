@@ -10,7 +10,6 @@ mod awc;
 mod config;
 mod database;
 mod handlers;
-mod routes;
 mod schema;
 mod schemas;
 mod server;
