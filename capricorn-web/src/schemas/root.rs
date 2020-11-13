@@ -1,28 +1,28 @@
 use crate::{database::DatabasePool, schema::*};
 use diesel::prelude::*;
-use juniper::{object, EmptySubscription, FieldResult, RootNode};
+use juniper::{graphql_object, EmptyMutation, EmptySubscription, FieldResult, RootNode};
 
 use super::service_provider::ServiceProvider;
-pub struct Context {
-    pub database_pool: DatabasePool,
+pub struct DataSource {
+    pub database: DatabasePool,
 }
 
-impl juniper::Context for Context {}
+impl juniper::Context for DataSource {}
 
-pub struct QueryRoot;
+pub struct Query;
 
-#[object(Context=Context)]
-impl QueryRoot {
+#[graphql_object(Context = DataSource)]
+impl Query {
     #[graphql(description = "List of all service provider")]
-    fn providers(ctx: &Context) -> FieldResult<Vec<ServiceProvider>> {
-        let conn = &ctx.database_pool.get()?;
+    fn providers(ctx: &DataSource) -> FieldResult<Vec<ServiceProvider>> {
+        let conn = &ctx.database.get()?;
         let providers = service_providers::table.load::<ServiceProvider>(conn)?;
         Ok(providers)
     }
 
-    #[graphql(description = "Get service provider by id")]
-    fn provider(ctx: &Context, id: i32) -> FieldResult<ServiceProvider> {
-        let conn = &ctx.database_pool.get()?;
+    #[graphql(arguments(id(description = "id of the provider")))]
+    fn provider(ctx: &DataSource, id: i32) -> FieldResult<ServiceProvider> {
+        let conn = &ctx.database.get()?;
         let provider = service_providers::table
             .find(id)
             .get_result::<ServiceProvider>(conn)?;
@@ -30,19 +30,13 @@ impl QueryRoot {
     }
 }
 
-pub struct MutationRoot;
+pub type Schema =
+    RootNode<'static, Query, EmptyMutation<DataSource>, EmptySubscription<DataSource>>;
 
-#[object(Context=Context)]
-impl MutationRoot {}
-
-pub struct Subscription;
-
-#[object(Context=Context)]
-impl Subscription {}
-
-pub type Schema = RootNode<'static, QueryRoot, MutationRoot, EmptySubscription<()>>;
-
-pub fn init_schema() -> Schema {
-    Schema::new(QueryRoot, MutationRoot)
+pub(crate) fn init_schema() -> Schema {
+    Schema::new(
+        Query,
+        EmptyMutation::<DataSource>::new(),
+        EmptySubscription::<DataSource>::new(),
+    )
 }
-    

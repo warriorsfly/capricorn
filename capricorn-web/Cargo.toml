@@ -22,7 +22,8 @@ envy = "0.4"
 # env_logger = "0.7"
 futures = "0.3"
 # jsonwebtoken = "7"
-juniper="0.14"
+juniper={git = "https://github.com/graphql-rust/juniper"}
+juniper_actix={git = "https://github.com/graphql-rust/juniper"}
 lazy_static = "1"
 rand = "0.7"
 serde = "1"

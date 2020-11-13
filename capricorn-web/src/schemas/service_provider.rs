@@ -1,8 +1,8 @@
-use super::{root::Context, service_application::ServiceApplication};
+use super::{root::DataSource, service_application::ServiceApplication};
 use crate::schema::*;
 use chrono::{DateTime, Utc};
 use diesel::prelude::*;
-use juniper::{object, FieldResult};
+use juniper::{graphql_object, FieldResult};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Queryable, Identifiable, PartialEq, Serialize)]
@@ -19,7 +19,7 @@ pub struct ServiceProvider {
     pub updated_at: DateTime<Utc>,
 }
 
-#[object(Context=Context)]
+#[graphql_object(Context = DataSource)]
 impl ServiceProvider {
     fn id(&self) -> &i32 {
         &self.id
@@ -37,9 +37,9 @@ impl ServiceProvider {
         &self.avatar
     }
 
-    fn applications(&self, ctx: &Context) -> FieldResult<Vec<ServiceApplication>> {
+    fn applications(&self, ctx: &DataSource) -> FieldResult<Vec<ServiceApplication>> {
         use crate::schema::service_applications::dsl::*;
-        let conn = ctx.database_pool.get()?;
+        let conn = ctx.database.get()?;
 
         let apps = service_applications
             .filter(provider.eq(self.id))

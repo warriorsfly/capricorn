@@ -1,7 +1,7 @@
-use super::root::Context;
+use super::root::DataSource;
 use crate::{config::DATE_FORMAT, schema::*};
 use chrono::{DateTime, Utc};
-use juniper::object;
+use juniper::graphql_object;
 use serde::{Deserialize, Serialize};
 use uuid;
 #[derive(Debug, Deserialize, Queryable, Identifiable, PartialEq, Serialize)]
@@ -19,7 +19,7 @@ pub struct ServiceApplication {
     pub updated_at: DateTime<Utc>,
 }
 
-#[object(Context=Context)]
+#[graphql_object(Context = DataSource)]
 impl ServiceApplication {
     fn id(&self) -> String {
         (&self.id.to_simple().to_string()).to_owned()

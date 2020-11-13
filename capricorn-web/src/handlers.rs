@@ -1,41 +1,28 @@
 use actix_web::{web, Error, HttpResponse};
-use juniper::{graphiql::graphiql_source, http::GraphQLRequest};
+
+use juniper_actix::{
+    graphiql_handler as gqli_handler, graphql_handler, playground_handler as play_handler,
+};
 
 use crate::{
     database::DatabasePool,
-    schemas::root::{init_schema, Context, Schema},
+    schemas::root::{DataSource, Schema},
 };
 
+pub async fn graphiql_handler() -> Result<HttpResponse, Error> {
+    gqli_handler("/", None).await
+}
+pub async fn playground_handler() -> Result<HttpResponse, Error> {
+    play_handler("/", None).await
+}
 pub async fn graphql(
+    req: actix_web::HttpRequest,
+    payload: actix_web::web::Payload,
     pool: web::Data<DatabasePool>,
     schema: web::Data<Schema>,
-    data: web::Json<GraphQLRequest>,
 ) -> Result<HttpResponse, Error> {
-    let ctx = Context {
-        database_pool: pool.get_ref().to_owned(),
+    let ctx = DataSource {
+        database: pool.get_ref().to_owned(),
     };
-
-    let res = web::block(move || {
-        let res = data.execute(&schema, &ctx);
-        Ok::<_, serde_json::error::Error>(serde_json::to_string(&res)?)
-    })
-    .await
-    .map_err(Error::from)?;
-
-    Ok(HttpResponse::Ok()
-        .content_type("application/json")
-        .body(res))
-}
-
-pub async fn graphql_playground() -> HttpResponse {
-    HttpResponse::Ok()
-        .content_type("text/html; charset=utf-8")
-        .body(graphiql_source("/graphql"))
-}
-
-pub fn add_graphql(config: &mut web::ServiceConfig) {
-    config
-        .data(init_schema())
-        .route("/graphql", web::post().to(graphql))
-        .route("/graphiql", web::get().to(graphql_playground));
+    graphql_handler(&schema, &ctx, req, payload).await
 }
