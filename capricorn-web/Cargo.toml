@@ -15,7 +15,6 @@ actix-web-actors = "3"
 actix-files = "0.4"
 actix-codec = "0.3"
 chrono ={version = "0.4",features = ["serde"]}
-redis-async =  "0.7"
 derive_more = "0.99"
 diesel = {git = "https://github.com/diesel-rs/diesel", features = ["chrono", "postgres", "r2d2", "serde_json","uuid"]}
 dotenv = "0.15"
