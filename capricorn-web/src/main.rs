@@ -7,6 +7,7 @@ extern crate lazy_static;
 extern crate serde_derive;
 
 mod awc;
+mod cache;
 mod config;
 mod database;
 mod handlers;

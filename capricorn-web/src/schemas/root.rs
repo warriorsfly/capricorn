@@ -1,4 +1,4 @@
-use crate::{database::DatabasePool, schema::*};
+use crate::{cache::RedisCache, database::DatabasePool, schema::*};
 use diesel::prelude::*;
 use juniper::{graphql_object, EmptyMutation, EmptySubscription, FieldResult, RootNode};
 
@@ -8,6 +8,18 @@ pub struct DataSource {
 }
 
 impl juniper::Context for DataSource {}
+
+pub struct MessageProducer {
+    pub cache: RedisCache,
+    pub kafka: String,
+}
+impl juniper::Context for MessageProducer {}
+
+pub struct MessageConsumer {
+    pub cache: RedisCache,
+    pub kafka: String,
+}
+impl juniper::Context for MessageConsumer {}
 
 pub struct Query;
 

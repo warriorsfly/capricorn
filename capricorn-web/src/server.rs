@@ -1,5 +1,6 @@
 use crate::{
-    awc::add_awc, config::CONFIG, database::add_pool, routes::routes, schemas::add_graphql,
+    awc::add_awc, cache::add_cache, config::CONFIG, database::add_pool, routes::routes,
+    schemas::add_graphql,
 };
 
 use actix_cors::Cors;
@@ -11,13 +12,15 @@ pub async fn serv() -> std::io::Result<()> {
         App::new()
             // 连接数据库
             .configure(add_pool)
+            // 添加redis client
+            .configure(add_cache)
             // 添加awc
             .configure(add_awc)
+            // 添加graphql
             .configure(add_graphql)
-            // 添加跨域
-            // .wrap(Cors::default().supports_credentials())
             // 添加日志
             .wrap(Logger::default())
+            // 添加跨域支持
             // .wrap(
             //     Cors::default()
             //         .allowed_origin(&CONFIG.server)
