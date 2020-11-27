@@ -5,6 +5,7 @@ use juniper::{graphql_object, EmptyMutation, EmptySubscription, FieldResult, Roo
 use super::service_provider::ServiceProvider;
 pub struct DataSource {
     pub database: DatabasePool,
+    pub cache: RedisCache,
 }
 
 impl juniper::Context for DataSource {}

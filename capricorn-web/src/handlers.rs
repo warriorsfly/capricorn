@@ -5,6 +5,7 @@ use juniper_actix::{
 };
 
 use crate::{
+    cache::RedisCache,
     database::DatabasePool,
     schemas::root::{DataSource, Schema},
 };
@@ -19,10 +20,12 @@ pub async fn graphql(
     req: actix_web::HttpRequest,
     payload: actix_web::web::Payload,
     pool: web::Data<DatabasePool>,
+    cache: web::Data<RedisCache>,
     schema: web::Data<Schema>,
 ) -> Result<HttpResponse, Error> {
     let ctx = DataSource {
         database: pool.get_ref().to_owned(),
+        cache: cache.get_ref().to_owned(),
     };
     graphql_handler(&schema, &ctx, req, payload).await
 }

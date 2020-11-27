@@ -14,7 +14,7 @@ use serde::Deserialize;
 pub const DATE_FORMAT: &str = "%Y-%m-%dT%H:%M:%S%.3fZ";
 #[derive(Clone, Deserialize, Debug)]
 pub struct Config {
-    pub auth_salt: String,
+    pub salt: String,
     pub database_url: String,
     pub redis_url: String,
     pub kafka_url: String,
