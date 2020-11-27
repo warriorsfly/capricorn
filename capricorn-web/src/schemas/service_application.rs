@@ -1,9 +1,10 @@
-use super::root::DataSource;
 use crate::{config::DATE_FORMAT, schema::*};
 use chrono::{DateTime, Utc};
 use juniper::graphql_object;
 use serde::{Deserialize, Serialize};
 use uuid;
+
+use super::DataSource;
 #[derive(Debug, Deserialize, Queryable, Identifiable, PartialEq, Serialize)]
 pub struct ServiceApplication {
     pub id: uuid::Uuid,

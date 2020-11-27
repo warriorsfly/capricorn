@@ -1,14 +1,8 @@
-use crate::{cache::RedisCache, database::DatabasePool, schema::*};
+use crate::{cache::RedisCache, schema::*};
 use diesel::prelude::*;
 use juniper::{graphql_object, EmptyMutation, EmptySubscription, FieldResult, RootNode};
 
-use super::service_provider::ServiceProvider;
-pub struct DataSource {
-    pub database: DatabasePool,
-    pub cache: RedisCache,
-}
-
-impl juniper::Context for DataSource {}
+use super::{service_provider::ServiceProvider, DataSource};
 
 pub struct MessageProducer {
     pub cache: RedisCache,
