@@ -1,0 +1,48 @@
+syntax="proto3";
+package notification;
+
+service Collab{
+    rpc SendMessage (Message) returns (Message);
+}
+//这部分内容应该放到redis,作为用户缓存
+message MessageSender{
+
+    string organization = 1;//机构代码
+    string organization_name = 2;//机构代码
+    string department = 3;//科室代码
+    string department_name = 4;//科室代码
+    string user = 5;
+    string user_name = 6;
+    string ip = 7;
+    string mac = 8;
+}
+message MessageReceiver{
+
+}
+
+message Message{
+
+    // 消息板条箱(消息显示的位置)
+    enum MessageContainer{
+        ICON = 0;//展示在App角标
+        LIST = 1;//展示在消息列表
+    }
+
+    enum MessageType{
+        System = 0; //系统消息
+        Application = 1;// 应用消息
+    }
+    message Body{
+        string url = 1;
+        string mark_down = 2; // markdown语法的文本
+    }
+    MessageContainer container = 1;
+    MessageType type = 2;
+    string title = 3;//标题
+    string description =  4;//消息描述
+    Body body = 5; //markdown消息内容
+
+}
+
+
+
