@@ -8,6 +8,8 @@ members = [
     "capricorn-rpc",
     # 短信
     "capricorn-sms",
+    #共用工具
+    "capricorn-tools",
     # 主程序
     "capricorn-web",
 ]

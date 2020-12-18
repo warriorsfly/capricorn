@@ -12,7 +12,7 @@ pub struct Message {
     pub discription: String,
     pub sender: String,
     pub reciver: String,
-    pub timeout: String,
+    pub timeout: i32,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
