@@ -1,8 +1,7 @@
 CREATE TABLE user_accounts
 (
-
     user_id int,
-    -- 0手机号 1微信
+    -- 0手机号 1微信 2身份证号
     identifier_type int NOT NULL,
     identifier VARCHAR(64) NOT NULL,
     primary key(identifier_type,identifier),

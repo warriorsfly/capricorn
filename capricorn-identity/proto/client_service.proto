@@ -1,0 +1,17 @@
+syntax="proto3";
+package capricorn.identity;
+
+message Client{
+    // 客户端Id
+    string id = 1;
+    // 密钥
+    string secret = 2;
+    // 令牌国旗时间
+    uint64 access_token_expire_at = 3;
+    // 刷新令牌的过期时间
+    uint64 refresh_token_expire_at = 4;
+    // 重定向地址
+    string registered_redirect_url = 5;
+    // 可以使用的授权类型
+    repeated string authorized_grant_types = 6;
+}
