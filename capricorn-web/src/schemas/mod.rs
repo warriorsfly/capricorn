@@ -2,6 +2,7 @@ use actix_web::web;
 
 use self::root::init_schema;
 
+pub mod message;
 pub mod message_type;
 pub mod root;
 pub mod service_application;

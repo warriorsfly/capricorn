@@ -7,6 +7,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+argon2rs = "0.2"
 chrono ={version = "0.4",features = ["serde"]}
 derive_more = "0.99"
 diesel = {git = "https://github.com/diesel-rs/diesel", features = ["chrono", "postgres", "r2d2", "serde_json","uuid"]}
@@ -16,8 +17,8 @@ envy = "0.4"
 futures = "0.3"
 jsonwebtoken = "7"
 lazy_static = "1"
-rand = "0.7"
-redis = "0.18"
+rand = "0.8"
+redis = { version = "0.18", features = ["tokio-comp"] }
 rdkafka = {version = "0.24", default-features = false}
 serde = "1"
 serde_derive = "1"

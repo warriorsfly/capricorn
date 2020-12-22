@@ -4,7 +4,11 @@ use crate::{
 };
 
 use actix_cors::Cors;
-use actix_web::{http::header, middleware::Logger, web, App, HttpServer};
+use actix_web::{
+    http::header,
+    middleware::{Compress, Logger},
+    web, App, HttpServer,
+};
 
 pub async fn serv() -> std::io::Result<()> {
     dotenv::dotenv().ok();
@@ -19,6 +23,7 @@ pub async fn serv() -> std::io::Result<()> {
             // 添加graphql
             .configure(add_graphql)
             // 添加日志
+            .wrap(Compress::default())
             .wrap(Logger::default())
             // 添加跨域支持
             .wrap(

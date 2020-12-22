@@ -1,4 +1,4 @@
-use crate::config::{Config, CONFIG};
+use crate::config::Config;
 // use actix_web::web;
 use diesel::{
     r2d2::{ConnectionManager, Pool, PoolError},

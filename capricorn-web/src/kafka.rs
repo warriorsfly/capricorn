@@ -8,7 +8,7 @@ use rdkafka::{
 
 fn init_consumer(brokers: String, topics: &[String]) -> Result<StreamConsumer, KafkaError> {
     let consumer: StreamConsumer = ClientConfig::new()
-        .set("group.id", "test-group")
+        .set("group.id", "im-capricorn")
         .set("bootstrap.servers", &brokers)
         .set("auto.offset.reset", "latest")
         .set("enable.partition.eof", "true")

@@ -1,4 +1,4 @@
-use super::{root::DataSource, service_application::ServiceApplication};
+use super::{service_application::ServiceApplication, DataSource};
 use crate::schema::*;
 use chrono::{DateTime, Utc};
 use diesel::prelude::*;

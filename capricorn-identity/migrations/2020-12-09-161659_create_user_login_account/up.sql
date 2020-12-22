@@ -5,7 +5,7 @@ CREATE TABLE user_accounts
     identifier_type int NOT NULL,
     identifier VARCHAR(64) NOT NULL,
     primary key(identifier_type,identifier),
-    cryptographic VARCHAR(16),
+    cryptographic VARCHAR(16) NOT NULL DEFAULT '',
     user_id int NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
