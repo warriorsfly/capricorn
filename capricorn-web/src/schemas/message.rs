@@ -1,6 +1,10 @@
 use super::DataSource;
 use chrono::{DateTime, Utc};
-use juniper::graphql_object;
+use juniper::{graphql_object, graphql_subscription};
+use redis::{
+    streams::{StreamId, StreamKey, StreamMaxlen, StreamReadOptions, StreamReadReply},
+    Commands,
+};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
@@ -55,9 +59,12 @@ impl CollabMessage {
 // impl Subscription {
 //     #[graphql(description = "message push service")]
 //     async fn push_message(context: &DataSource) -> CollabMessageStream {
-//         let mut subscriber = context.cache.get_async_connection().await?.into_pubsub();
-//         subscriber.subscribe("channel_message").await?;
-//         let mut stream = subscriber.on_message();
-//         Box::pin(stream)
+//         let mut connection = context.cache.get_connection()?;
+
+//         let opts = StreamReadOptions::default();
+
+//         let srr: StreamReadReply = connection
+//             .xread_options(STREAMS, &[starting_id, another_form, starting_id], opts)
+//             .expect("read messages error");
 //     }
 // }

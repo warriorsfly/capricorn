@@ -4,7 +4,7 @@ CREATE TABLE service_applications
 (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     -- belong to user
-    provider int NOT NULL REFERENCES service_providers (id),
+    provider int NOT NULL REFERENCES service_providers(id),
     slug TEXT UNIQUE NOT NULL,
     -- application name
     name TEXT NOT NULL,
