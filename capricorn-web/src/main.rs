@@ -16,6 +16,7 @@ mod routes;
 mod schema;
 mod schemas;
 mod server;
+mod services;
 mod state;
 mod tests;
 mod utils;

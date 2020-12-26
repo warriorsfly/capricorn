@@ -8,12 +8,7 @@ pub mod root;
 pub mod service_application;
 pub mod service_provider;
 
-use crate::datasource::{Database, Redis};
-
-pub struct DataSource {
-    pub database: Database,
-    pub cache: Redis,
-}
+use crate::datasource::DataSource;
 
 impl juniper::Context for DataSource {}
 

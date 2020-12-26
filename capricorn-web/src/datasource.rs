@@ -16,9 +16,9 @@ use redis::{Client, RedisResult};
 // };
 
 /// Database connection pool
-pub type Database = Pool<ConnectionManager<PgConnection>>;
+pub type DatabasePool = Pool<ConnectionManager<PgConnection>>;
 
-pub fn init_pool(config: Config) -> Result<Database, PoolError> {
+pub fn init_pool(config: Config) -> Result<DatabasePool, PoolError> {
     let manager = ConnectionManager::<PgConnection>::new(config.database_url);
     Pool::builder().build(manager)
 }
@@ -28,11 +28,12 @@ pub fn add_pool(cfg: &mut web::ServiceConfig) {
     cfg.data(pool);
 }
 
-pub type Redis = Client;
+/// RedisPool,real redis client
+pub type RedisPool = Client;
 
 /// create redis client, with the Config.redis_url
-fn init_redis(config: Config) -> RedisResult<Redis> {
-    let client = Redis::open(config.redis_url)?;
+fn init_redis(config: Config) -> RedisResult<RedisPool> {
+    let client = RedisPool::open(config.redis_url)?;
     Ok(client)
 }
 
@@ -62,3 +63,9 @@ pub fn add_redis(cfg: &mut web::ServiceConfig) {
 
 //     Ok(consumer)
 // }
+
+/// Database,Redis,Kafka connection pool all in here
+pub struct DataSource {
+    pub database: DatabasePool,
+    pub redis: RedisPool,
+}

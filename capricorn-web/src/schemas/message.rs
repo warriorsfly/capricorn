@@ -1,4 +1,3 @@
-use super::DataSource;
 use chrono::{DateTime, Utc};
 use juniper::{graphql_object, graphql_subscription};
 use redis::{
@@ -6,6 +5,8 @@ use redis::{
     Commands,
 };
 use serde::{Deserialize, Serialize};
+
+use crate::datasource::DataSource;
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub struct CollabMessage {
@@ -58,13 +59,13 @@ struct Subscription;
 #[graphql_subscription(context = DataSource)]
 impl Subscription {
     #[graphql(description = "message push service")]
-    async fn push_message(context: &DataSource) {
-        let mut connection = context.cache.get_connection()?;
+    async fn subscribe(context: &DataSource) {
+        let mut redis_connection = context.redis.get_connection()?;
 
         let opts = StreamReadOptions::default();
 
-        let srr: StreamReadReply = connection
+        let srr: StreamReadReply = redis_connection
             .xread_options(STREAMS, &[starting_id, another_form, starting_id], opts)
-            .expect("read messages error");
+            .expect("read");
     }
 }

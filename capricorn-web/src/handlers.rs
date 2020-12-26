@@ -5,8 +5,8 @@ use juniper_actix::{
 };
 
 use crate::{
-    datasource::{Database, Redis},
-    schemas::{root::Schema, DataSource},
+    datasource::{DataSource, DatabasePool, RedisPool},
+    schemas::root::Schema,
 };
 
 pub async fn graphiql_handler() -> Result<HttpResponse, Error> {
@@ -18,13 +18,13 @@ pub async fn playground_handler() -> Result<HttpResponse, Error> {
 pub async fn graphql(
     req: actix_web::HttpRequest,
     payload: actix_web::web::Payload,
-    pool: web::Data<Database>,
-    cache: web::Data<Redis>,
+    pool: web::Data<DatabasePool>,
+    cache: web::Data<RedisPool>,
     schema: web::Data<Schema>,
 ) -> Result<HttpResponse, Error> {
     let ctx = DataSource {
         database: pool.get_ref().to_owned(),
-        cache: cache.get_ref().to_owned(),
+        redis: cache.get_ref().to_owned(),
     };
     graphql_handler(&schema, &ctx, req, payload).await
 }
