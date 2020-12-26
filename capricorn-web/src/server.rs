@@ -1,5 +1,8 @@
 use crate::{
-    awc::add_awc, cache::add_cache, config::CONFIG, database::add_pool, middleware, routes::routes,
+    awc::add_awc,
+    config::CONFIG,
+    datasource::{add_cache, add_pool},
+    routes::routes,
     schemas::add_graphql,
 };
 
@@ -12,7 +15,7 @@ pub async fn serv() -> std::io::Result<()> {
     dotenv::dotenv().ok();
     let serve = HttpServer::new(move || {
         App::new()
-            .wrap(middleware::authorization::Authorization)
+            // .wrap(middleware::authorization::Authorization)
             // 连接数据库
             .configure(add_pool)
             // 添加redis client

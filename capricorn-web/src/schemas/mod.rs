@@ -8,7 +8,7 @@ pub mod root;
 pub mod service_application;
 pub mod service_provider;
 
-use crate::{cache::RedisCache, database::DatabasePool};
+use crate::datasource::{DatabasePool, RedisCache};
 
 pub struct DataSource {
     pub database: DatabasePool,

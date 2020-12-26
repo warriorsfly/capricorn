@@ -5,9 +5,8 @@ use juniper_actix::{
 };
 
 use crate::{
-    cache::RedisCache,
-    database::DatabasePool,
-    schemas::{DataSource, root::Schema},
+    datasource::{DatabasePool, RedisCache},
+    schemas::{root::Schema, DataSource},
 };
 
 pub async fn graphiql_handler() -> Result<HttpResponse, Error> {

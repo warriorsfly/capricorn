@@ -1,4 +1,4 @@
-use crate::{cache::RedisCache, schema::*};
+use crate::{datasource::RedisCache, schema::*};
 use diesel::prelude::*;
 use juniper::{graphql_object, EmptyMutation, EmptySubscription, FieldResult, RootNode};
 
