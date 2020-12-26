@@ -1,7 +1,7 @@
 use crate::{
     awc::add_awc,
     config::CONFIG,
-    datasource::{add_cache, add_pool},
+    datasource::{add_pool, add_redis},
     routes::routes,
     schemas::add_graphql,
 };
@@ -19,7 +19,7 @@ pub async fn serv() -> std::io::Result<()> {
             // 连接数据库
             .configure(add_pool)
             // 添加redis client
-            .configure(add_cache)
+            .configure(add_redis)
             // 添加awc
             .configure(add_awc)
             // 添加graphql

@@ -1,17 +1,17 @@
-use crate::{datasource::RedisCache, schema::*};
+use crate::{datasource::Redis, schema::*};
 use diesel::prelude::*;
 use juniper::{graphql_object, EmptyMutation, EmptySubscription, FieldResult, RootNode};
 
 use super::{service_provider::ServiceProvider, DataSource};
 
 pub struct MessageProducer {
-    pub cache: RedisCache,
+    pub cache: Redis,
     pub kafka: String,
 }
 impl juniper::Context for MessageProducer {}
 
 pub struct MessageConsumer {
-    pub cache: RedisCache,
+    pub cache: Redis,
     pub kafka: String,
 }
 impl juniper::Context for MessageConsumer {}

@@ -1,15 +1,15 @@
 [workspace]
 members = [
     # 邮件服务
-    "capricorn-email",
+    # "capricorn-email",
     #统一用户认证
-    "capricorn-identity",
+    # "capricorn-identity",
     # 定义使用的rpc
-    "capricorn-rpc",
+    # "capricorn-rpc",
     # 短信
-    "capricorn-sms",
+    # "capricorn-sms",
     #共用工具
-    "capricorn-tools",
+    # "capricorn-tools",
     # 主程序
     "capricorn-web",
 ]

@@ -54,17 +54,17 @@ impl CollabMessage {
 }
 
 // type CollabMessageStream = Pin<Box<dyn futures::Stream<Item = Result<Msg, FieldError>> + Send>>;
-// struct Subscription;
-// #[graphql_subscription(context = DataSource)]
-// impl Subscription {
-//     #[graphql(description = "message push service")]
-//     async fn push_message(context: &DataSource) -> CollabMessageStream {
-//         let mut connection = context.cache.get_connection()?;
+struct Subscription;
+#[graphql_subscription(context = DataSource)]
+impl Subscription {
+    #[graphql(description = "message push service")]
+    async fn push_message(context: &DataSource) {
+        let mut connection = context.cache.get_connection()?;
 
-//         let opts = StreamReadOptions::default();
+        let opts = StreamReadOptions::default();
 
-//         let srr: StreamReadReply = connection
-//             .xread_options(STREAMS, &[starting_id, another_form, starting_id], opts)
-//             .expect("read messages error");
-//     }
-// }
+        let srr: StreamReadReply = connection
+            .xread_options(STREAMS, &[starting_id, another_form, starting_id], opts)
+            .expect("read messages error");
+    }
+}

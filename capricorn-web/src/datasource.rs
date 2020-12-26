@@ -15,9 +15,10 @@ use redis::{Client, RedisResult};
 //     ClientConfig,
 // };
 
-pub type DatabasePool = Pool<ConnectionManager<PgConnection>>;
+/// Database connection pool
+pub type Database = Pool<ConnectionManager<PgConnection>>;
 
-pub fn init_pool(config: Config) -> Result<DatabasePool, PoolError> {
+pub fn init_pool(config: Config) -> Result<Database, PoolError> {
     let manager = ConnectionManager::<PgConnection>::new(config.database_url);
     Pool::builder().build(manager)
 }
@@ -27,17 +28,17 @@ pub fn add_pool(cfg: &mut web::ServiceConfig) {
     cfg.data(pool);
 }
 
-pub type RedisCache = Client;
+pub type Redis = Client;
 
 /// create redis client, with the Config.redis_url
-fn init_cache(config: Config) -> RedisResult<RedisCache> {
-    let client = RedisCache::open(config.redis_url)?;
+fn init_redis(config: Config) -> RedisResult<Redis> {
+    let client = Redis::open(config.redis_url)?;
     Ok(client)
 }
 
 /// add redis client to actix web server
-pub fn add_cache(cfg: &mut web::ServiceConfig) {
-    let cache = init_cache(CONFIG.clone()).expect("Failed to connect to the redis url");
+pub fn add_redis(cfg: &mut web::ServiceConfig) {
+    let cache = init_redis(CONFIG.clone()).expect("Failed to connect to the redis url");
     cfg.data(cache);
 }
 

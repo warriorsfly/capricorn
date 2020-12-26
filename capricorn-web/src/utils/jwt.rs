@@ -5,26 +5,31 @@ use jsonwebtoken::{decode, encode, errors::Error, DecodingKey, EncodingKey, Head
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct Claims {
-    pub id: i32,
+    pub app: i32,
+    pub user: i32,
     pub exp: i64,
 }
 
 impl Claims {
-    pub fn new(id: i32) -> Self {
+    #[allow(dead_code)]
+    pub fn new(app: i32, user: i32) -> Self {
         Self {
-            id,
+            app,
+            user,
             exp: (Utc::now() + Duration::hours(CONFIG.jwt_expiration)).timestamp(),
         }
     }
 }
 
 /// Create a json web token (JWT)
+#[allow(dead_code)]
 pub fn create_jwt(claim: Claims) -> Result<String, Error> {
     let encoding_key = EncodingKey::from_secret(&CONFIG.jwt_key.as_ref());
     encode(&Header::default(), &claim, &encoding_key)
 }
 
 /// Decode a json web token (JWT)
+#[allow(dead_code)]
 pub fn decode_jwt(token: &str) -> Result<Claims, Error> {
     let decoding_key = DecodingKey::from_secret(&CONFIG.jwt_key.as_ref());
     decode::<Claims>(token, &decoding_key, &Validation::default()).map(|data| data.claims)
@@ -34,6 +39,7 @@ pub fn decode_jwt(token: &str) -> Result<Claims, Error> {
 ///
 /// Uses the argon2i algorithm.
 /// salt is environment-condigured.
+#[allow(dead_code)]
 pub fn hash(password: &str) -> String {
     argon2i_simple(&password, &CONFIG.salt)
         .iter()
