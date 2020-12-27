@@ -1,5 +1,5 @@
 [package]
-name = "capricorn-web"
+name = "capricorn-lab"
 version = "0.1.0"
 authors = ["walker <warriorsfly@gmail.com>"]
 edition = "2018"
@@ -26,9 +26,6 @@ envy = "0.4"
 # env_logger = "0.7"
 futures = "0.3"
 jsonwebtoken = "7"
-juniper="0.15"
-juniper_actix="0.2"
-juniper_graphql_ws="0.2"
 lazy_static = "1"
 rand = "0.8"
 redis =   "0.18"

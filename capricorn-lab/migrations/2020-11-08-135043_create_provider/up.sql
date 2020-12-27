@@ -1,7 +1,4 @@
-CREATE EXTENSION
-IF NOT EXISTS "uuid-ossp";
-
-CREATE TABLE service_providers
+CREATE TABLE providers
 (
     id SERIAL PRIMARY KEY,
     name VARCHAR(16) NOT NULL,
@@ -14,4 +11,4 @@ CREATE TABLE service_providers
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
-    SELECT diesel_manage_updated_at('service_providers');
+    SELECT diesel_manage_updated_at('providers');
