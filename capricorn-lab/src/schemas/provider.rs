@@ -1,6 +1,5 @@
-use crate::schema::*;
+use crate::schema::providers;
 use chrono::{DateTime, Utc};
-use diesel::prelude::*;
 
 #[derive(Debug, Deserialize, Queryable, Identifiable, PartialEq, Serialize)]
 pub struct Provider {

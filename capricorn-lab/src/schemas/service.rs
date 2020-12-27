@@ -1,9 +1,10 @@
 use chrono::{DateTime, Utc};
-use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 use uuid;
 
-#[derive(Debug, Deserialize, Queryable, Identifiable, PartialEq, Serialize)]
+use crate::schema::services;
+
+#[derive(Debug, Deserialize, Queryable, PartialEq, Serialize)]
 pub struct Service {
     pub id: uuid::Uuid,
     pub provider: i32,
@@ -21,8 +22,14 @@ pub struct Service {
 #[derive(Debug, Insertable)]
 #[table_name = "services"]
 pub struct ServiceInput<'a> {
+    pub provider: &'a i32,
+    pub slug: &'a str,
     pub name: &'a str,
-    pub email: &'a str,
-    pub password: &'a str,
-    pub avatar: &'a str,
+    pub description: &'a str,
+    pub icon: &'a str,
+    pub secret: &'a str,
+    pub key: &'a str,
+    pub enabled: &'a bool,
+    pub created_at: &'a DateTime<Utc>,
+    pub updated_at: &'a DateTime<Utc>,
 }
