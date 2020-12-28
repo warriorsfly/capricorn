@@ -17,7 +17,7 @@ pub async fn serv() -> std::io::Result<()> {
     dotenv::dotenv().ok();
     let serve = HttpServer::new(move || {
         App::new()
-            .wrap(middlewares::authorization::Authorization)
+            .wrap(middlewares::JwtAuthorization)
             // 连接数据库
             .configure(add_pool)
             // 添加redis client

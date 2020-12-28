@@ -17,7 +17,7 @@ pub struct Provider {
 
 #[derive(Debug, Insertable)]
 #[table_name = "providers"]
-pub struct ProviderInput<'a> {
+pub struct NewProvider<'a> {
     pub name: &'a str,
     pub email: &'a str,
     pub password: &'a str,

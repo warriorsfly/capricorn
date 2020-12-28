@@ -3,25 +3,25 @@ use redis::{
     Commands, RedisResult,
 };
 
-use crate::datasource::RedisPool;
+use crate::{datasource::RedisPool, schemas::mqtt::LabMessage};
 
-/// application private streams
-pub const PRIVATE_APPLICATION_STREAM: &str = "private-message";
+/// service private streams
+pub const SERVICE_STREAM: &str = "service-stream";
 /// collab stream for all applications
-pub const COLLAB_APPLICATION_STREAM: &str = "collab-stream";
+pub const LAB_STREAM: &str = "lab-stream";
 
-pub const STREAMS: &[&str] = &[PRIVATE_APPLICATION_STREAM, COLLAB_APPLICATION_STREAM];
+pub const STREAMS: &[&str] = &[SERVICE_STREAM, LAB_STREAM];
 
-// pub async fn add_message(
-//     redis: &RedisPool,
-//     application: i32,
-//     uid: i32,
-//     message: Message,
-// ) -> RedisResult<()> {
-//     Ok(())
-// }
+pub async fn collab(
+    redis: &RedisPool,
+    service_id: i32,
+    uid: i32,
+    message: LabMessage,
+) -> RedisResult<()> {
+    Ok(())
+}
 ///Read messages from redis stream
-pub async fn subscribe_message(redis: &RedisPool) -> RedisResult<String> {
+pub async fn subscribe(redis: &RedisPool) -> RedisResult<String> {
     let mut redis_connection = redis.get_connection()?;
 
     let opts = StreamReadOptions::default();

@@ -21,7 +21,7 @@ pub struct Service {
 
 #[derive(Debug, Insertable)]
 #[table_name = "services"]
-pub struct ServiceInput<'a> {
+pub struct NewService<'a> {
     pub provider: &'a i32,
     pub slug: &'a str,
     pub name: &'a str,
@@ -30,6 +30,4 @@ pub struct ServiceInput<'a> {
     pub secret: &'a str,
     pub key: &'a str,
     pub enabled: &'a bool,
-    pub created_at: &'a DateTime<Utc>,
-    pub updated_at: &'a DateTime<Utc>,
 }

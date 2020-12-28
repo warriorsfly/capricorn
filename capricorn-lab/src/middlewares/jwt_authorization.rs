@@ -16,9 +16,9 @@ use futures::{
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
-pub struct Authorization;
+pub struct JwtAuthorization;
 
-impl<S, B> Transform<S> for Authorization
+impl<S, B> Transform<S> for JwtAuthorization
 where
     S: Service<Request = ServiceRequest, Response = ServiceResponse<B>, Error = Error>,
     S::Future: 'static,
