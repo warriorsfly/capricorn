@@ -1,4 +1,5 @@
 use chrono::{DateTime, Utc};
+use redis::{FromRedisValue, ToRedisArgs};
 use serde::{Deserialize, Serialize};
 
 /// pushing receive platforms
@@ -24,25 +25,49 @@ pub struct Audience {
 }
 
 #[derive(Debug, PartialEq, Serialize)]
-pub struct LabMessage {
+pub struct LabMessageRequest {
     pub platforms: Platform,
     pub audience: Audience,
-    pub notification: Option<Notification>,
-    pub message: Option<Message>,
+    pub notification: Option<LabNotification>,
+    pub message: Option<LabMessage>,
     pub cid: Option<String>,
 }
 
 #[derive(Debug, PartialEq, Serialize)]
-pub struct Message {
+pub struct LabMessage {
     pub title: String,
-    pub content_type: String,
+    pub typ: String,
     pub content: String,
-    pub created_at: DateTime<Utc>,
-    pub updated_at: DateTime<Utc>,
+}
+
+impl ToRedisArgs for LabMessage {
+    fn write_redis_args<W>(&self, out: &mut W)
+    where
+        W: ?Sized + redis::RedisWrite,
+    {
+        out.write_arg(b"title");
+        out.write_arg_fmt(&self.title);
+        out.write_arg(b"typ");
+        out.write_arg_fmt(&self.typ);
+        out.write_arg(b"content");
+        out.write_arg_fmt(&self.content);
+    }
+}
+
+impl FromRedisValue for LabMessage {
+    fn from_redis_value(v: &redis::Value) -> redis::RedisResult<Self> {
+        let (title, typ, content) = FromRedisValue::from_redis_value(v)?;
+
+        Ok(LabMessage {
+            title,
+            typ,
+            content,
+        })
+    }
 }
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
-pub struct Notification {
+pub struct LabNotification {
     pub alert: String,
     pub content_type: String,
     pub content: String,
