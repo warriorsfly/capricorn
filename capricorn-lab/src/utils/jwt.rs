@@ -2,7 +2,7 @@ use crate::config::CONFIG;
 use argon2rs::argon2i_simple;
 use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, errors::Error, DecodingKey, EncodingKey, Header, Validation};
-
+use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct Claims {
     pub app: i32,

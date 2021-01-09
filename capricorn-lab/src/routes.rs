@@ -1,5 +1,7 @@
 use actix_web::web;
 
+use crate::handlers;
+
 pub fn routes(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/api")
@@ -17,5 +19,6 @@ pub fn routes(cfg: &mut web::ServiceConfig) {
                                          // .route("/{id}", web::delete().to(delete_user))
                                          // .route("", web::get().to(get_users))
             ),
-    );
+    )
+    .service(web::scope("/ws").route("/lab", web::get().to(handlers::lab::ws_lab_index)));
 }

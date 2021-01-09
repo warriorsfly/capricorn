@@ -12,7 +12,7 @@ pub enum Platform {
     Windows,
 }
 
-#[derive(Debug, Deserialize, PartialEq, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Audience {
     pub all: Option<String>,
     pub tag: Option<Vec<String>>,
@@ -33,11 +33,17 @@ pub struct LabMessageRequest {
     pub cid: Option<String>,
 }
 
-#[derive(Debug, PartialEq, Serialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct LabMessage {
     pub title: String,
     pub typ: String,
     pub content: String,
+}
+
+impl Into<String> for LabMessage {
+    fn into(self) -> String {
+        serde_json::to_string(&self).expect("error deserialize for LabMessage")
+    }
 }
 
 impl ToRedisArgs for LabMessage {

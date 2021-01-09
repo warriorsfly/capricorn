@@ -7,7 +7,7 @@ use redis::{
 
 use crate::{constants, datasource::RedisPool, schemas::lab::LabMessage};
 
-pub async fn publish_lab_message(
+pub async fn publish_redis_message(
     redis: &RedisPool,
     uid: i32,
     lab_message: LabMessage,
@@ -19,9 +19,9 @@ pub async fn publish_lab_message(
     rr
 }
 ///Read messages from redis stream
-pub async fn subscribe_lab_message(redis: &RedisPool, uid: i32) -> RedisResult<String> {
+pub async fn subscribe_redis_message(redis: &RedisPool, key: String) -> RedisResult<String> {
     let mut redis_connection = redis.get_connection()?;
-    let key = format!("lab_message:{}", uid);
+    // let key = format!("lab_message:{}", uid);
     let keys = vec![key];
     let opts = StreamReadOptions::default();
     // Oldest known time index

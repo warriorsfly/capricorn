@@ -20,8 +20,6 @@ lazy_static = "1"
 rand = "0.8"
 redis = "0.19"
 rdkafka = {version = "0.24", default-features = false}
-serde = "1"
-serde_derive = "1"
-serde_json = "1"
+serde = { version = "1", features = ["derive"] }
 slug="0.1"
 tonic = "0.3"

@@ -1,145 +1,83 @@
-// #[cfg(test)]
-// pub mod tests {
+#[cfg(test)]
+pub mod tests {
 
-//     use crate::{
-//         cache::add_cache,
-//         config::CONFIG,
-//         constants,
-//         database::{add_pool, init_pool, ConnectionPool},
-//         handlers::auth::{LoginData, LoginResponse},
-//         middleware,
-//         routes::routes,
-//         state::{new_state, AppState},
-//     };
-//     use actix_web::{
-//         dev::ServiceResponse,
-//         test,
-//         web::{Data, Json},
-//         App,
-//     };
-//     use serde::Serialize;
+    use crate::{
+        config::CONFIG,
+        constants,
+        datasource::{add_pool, add_redis, init_pool, DatabasePool},
+        middlewares,
+        routes::routes,
+        state::{new_state, AppState},
+    };
+    use actix_web::{
+        dev::ServiceResponse,
+        test,
+        web::{Data, Json},
+        App,
+    };
+    use serde::Serialize;
 
-//     /// Helper for HTTP GET integration tests
-//     pub async fn test_get(route: &str) -> ServiceResponse {
-//         let login_request = LoginData {
-//             email: "warriorsfly@gmail.com".into(),
-//             password: "123456".into(),
-//         };
+    /// Helper for HTTP GET integration tests
+    pub async fn test_get(route: &str) -> ServiceResponse {
+        let mut app = test::init_service(
+            App::new()
+                .wrap(middlewares::JwtAuthorization)
+                .configure(add_redis)
+                .app_data(app_state())
+                .configure(add_pool)
+                .configure(routes),
+        )
+        .await;
 
-//         let mut app = test::init_service(
-//             App::new()
-//                 .wrap(middleware::Authentication)
-//                 .configure(add_cache)
-//                 .app_data(app_state())
-//                 .configure(add_pool)
-//                 .configure(routes),
-//         )
-//         .await;
+        // let cookie = response.response().headers().get(constants::AUTHORIZATION);
 
-//         let json: LoginResponse = test::read_response_json(
-//             &mut app,
-//             test::TestRequest::post()
-//                 .set_json(&login_request)
-//                 .uri("/api/auth/login")
-//                 .to_request(),
-//         )
-//         .await;
+        test::call_service(&mut app, test::TestRequest::get().uri(route).to_request()).await
+    }
 
-//         // let cookie = response.response().headers().get(constants::AUTHORIZATION);
+    /// Helper for HTTP GET integration tests
+    pub async fn test_post<T: Serialize>(route: &str, params: T) -> ServiceResponse {
+        let mut app = test::init_service(
+            App::new()
+                .configure(add_redis)
+                .app_data(app_state())
+                .configure(add_pool)
+                .configure(routes),
+        )
+        .await;
+        test::call_service(
+            &mut app,
+            test::TestRequest::post()
+                .set_json(&params)
+                .uri(route)
+                .to_request(),
+        )
+        .await
+    }
 
-//         test::call_service(
-//             &mut app,
-//             test::TestRequest::get()
-//                 .header(constants::AUTHORIZATION, json.token)
-//                 .uri(route)
-//                 .to_request(),
-//         )
-//         .await
-//     }
+    pub async fn assert_get(route: &str) -> ServiceResponse {
+        let response = test_get(route).await;
+        assert!(response.status().is_success());
+        response
+    }
 
-//     /// Helper for HTTP GET integration tests
-//     pub async fn test_post<T: Serialize>(route: &str, params: T) -> ServiceResponse {
-//         let login_request = LoginData {
-//             email: "warriorsfly@gmail.com".into(),
-//             password: "123456".into(),
-//         };
+    pub async fn assert_post<T: Serialize>(route: &str, params: T) -> ServiceResponse {
+        let response = test_post(route, params).await;
+        assert!(response.status().is_success());
+        response
+    }
 
-//         let mut app = test::init_service(
-//             App::new()
-//                 .configure(add_cache)
-//                 .app_data(app_state())
-//                 .configure(add_pool)
-//                 .configure(routes),
-//         )
-//         .await;
+    // Mock applicate sql connection pool
+    pub fn get_pool() -> DatabasePool {
+        init_pool(CONFIG.clone()).unwrap()
+    }
 
-//         let json: LoginResponse = test::read_response_json(
-//             &mut app,
-//             test::TestRequest::post()
-//                 .set_json(&login_request)
-//                 .uri("/api/auth/login")
-//                 .to_request(),
-//         )
-//         .await;
+    /// Returns a r2d2 Pooled Connection wrappedn in Actix Application Data
+    pub fn get_data_pool() -> Data<DatabasePool> {
+        Data::new(get_pool())
+    }
 
-//         test::call_service(
-//             &mut app,
-//             test::TestRequest::post()
-//                 .set_json(&params)
-//                 .header(constants::AUTHORIZATION, json.token)
-//                 .uri(route)
-//                 .to_request(),
-//         )
-//         .await
-//     }
-
-//     pub async fn assert_get(route: &str) -> ServiceResponse {
-//         let response = test_get(route).await;
-//         assert!(response.status().is_success());
-//         response
-//     }
-
-//     pub async fn assert_post<T: Serialize>(route: &str, params: T) -> ServiceResponse {
-//         let response = test_post(route, params).await;
-//         assert!(response.status().is_success());
-//         response
-//     }
-
-//     // Mock applicate sql connection pool
-//     pub fn get_pool() -> ConnectionPool {
-//         init_pool(CONFIG.clone()).unwrap()
-//     }
-
-//     /// Returns a r2d2 Pooled Connection wrappedn in Actix Application Data
-//     pub fn get_data_pool() -> Data<ConnectionPool> {
-//         Data::new(get_pool())
-//     }
-
-//     pub async fn login() -> ServiceResponse {
-//         let login_request = LoginData {
-//             email: "warriorsfly@gmail.com".into(),
-//             password: "123456".into(),
-//         };
-
-//         let mut app = test::init_service(
-//             App::new()
-//                 .wrap(middleware::Authentication)
-//                 .configure(add_pool)
-//                 .configure(routes),
-//         )
-//         .await;
-
-//         test::call_service(
-//             &mut app,
-//             test::TestRequest::post()
-//                 .set_json(&login_request)
-//                 .uri("api/auth/login")
-//                 .to_request(),
-//         )
-//         .await
-//     }
-//     // Mock applicate state
-//     pub fn app_state() -> AppState<'static, String> {
-//         new_state::<String>()
-//     }
-// }
+    // Mock applicate state
+    pub fn app_state() -> AppState<'static, String> {
+        new_state::<String>()
+    }
+}
