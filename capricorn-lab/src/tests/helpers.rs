@@ -8,6 +8,7 @@ pub mod tests {
         middlewares,
         routes::routes,
         state::{new_state, AppState},
+        utils::jwt::{create_jwt, Claims},
     };
     use actix_web::{
         dev::ServiceResponse,
@@ -17,11 +18,17 @@ pub mod tests {
     };
     use serde::Serialize;
 
+    fn jwt() -> String {
+        let claims = Claims::new(1, 1);
+        let jwt = create_jwt(claims).unwrap();
+        jwt
+    }
+
     /// Helper for HTTP GET integration tests
     pub async fn test_get(route: &str) -> ServiceResponse {
         let mut app = test::init_service(
             App::new()
-                .wrap(middlewares::JwtAuthorization)
+                // .wrap(middlewares::JwtAuthorization)
                 .configure(add_redis)
                 .app_data(app_state())
                 .configure(add_pool)

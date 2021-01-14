@@ -2,7 +2,6 @@ use crate::{
     awc::add_awc,
     config::CONFIG,
     datasource::{add_pool, add_redis},
-    middlewares,
     routes::routes,
 };
 
@@ -17,7 +16,7 @@ pub async fn serv() -> std::io::Result<()> {
     dotenv::dotenv().ok();
     let serve = HttpServer::new(move || {
         App::new()
-            .wrap(middlewares::JwtAuthorization)
+            // .wrap(middlewares::JwtAuthorization)
             // 连接数据库
             .configure(add_pool)
             // 添加redis client

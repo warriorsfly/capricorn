@@ -1,5 +1,7 @@
+use std::collections::HashMap;
+
 use chrono::{DateTime, Utc};
-use redis::{FromRedisValue, ToRedisArgs};
+use redis::{streams::StreamId, FromRedisValue, ToRedisArgs, Value};
 use serde::{Deserialize, Serialize};
 
 /// pushing receive platforms
@@ -43,6 +45,16 @@ pub struct LabMessage {
 impl Into<String> for LabMessage {
     fn into(self) -> String {
         serde_json::to_string(&self).expect("error deserialize for LabMessage")
+    }
+}
+
+impl From<&StreamId> for LabMessage {
+    fn from(id: &StreamId) -> Self {
+        Self {
+            title: id.get::<String>("title").unwrap_or("".to_string()),
+            typ: id.get::<String>("typ").unwrap_or("".to_string()),
+            content: id.get::<String>("content").unwrap_or("".to_string()),
+        }
     }
 }
 

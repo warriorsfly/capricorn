@@ -7,10 +7,9 @@ use actix_web::{
 };
 use actix_web_actors::ws;
 use redis::{
-    streams::{StreamId, StreamKey, StreamReadOptions, StreamReadReply},
-    Commands, Connection,
+    streams::{StreamId, StreamKey, StreamRangeReply, StreamReadOptions, StreamReadReply},
+    Commands, Value,
 };
-use web::Json;
 
 use std::{sync::Arc, time::Instant};
 
@@ -22,9 +21,7 @@ pub async fn ws_lab_index(
 ) -> Result<HttpResponse, Error> {
     // pub async fn ws_lab_index(r: HttpRequest, stream: web::Payload) -> Result<HttpResponse, Error> {
     // println!("{:?}", r);
-
-    let key = format!("lab_message:{}", 1);
-    let res = ws::start(LabSocket::new(pool.into_inner(), key), &req, stream);
+    let res = ws::start(LabSocket::new(&pool), &req, stream);
     println!("{:?}", res);
     res
 }
@@ -32,24 +29,31 @@ pub async fn ws_lab_index(
 /// websocket connection is long running connection, it easier
 /// to handle with an actor
 struct LabSocket {
-    /// Redis Connection for load data
-    pool: Arc<RedisPool>,
-    key: String,
     /// Client must send ping at least once per 10 seconds (CLIENT_TIMEOUT),
     /// otherwise we drop connection.
+    srr: StreamReadReply,
     hb: Instant,
 }
 
 impl LabSocket {
-    fn new(pool: Arc<RedisPool>, key: String) -> Self {
+    fn new(pool: &RedisPool) -> Self {
+        let mut connection = pool.get_connection().expect("redis connection error");
+        // let key = format!("lab_message:{}", uid);
+        let keys = vec!["lab-message"];
+        let opts = StreamReadOptions::default();
+        // Oldest known time index
+        let start = "$";
+        let srr: StreamReadReply = connection
+            .xread_options(&keys, &[start], opts)
+            // .xread_options(&keys, &[starting_id], opts)
+            .expect("read");
         Self {
-            pool,
-            key,
+            srr,
             hb: Instant::now(),
         }
     }
 
-    fn heart_beat(&self, ctx: &mut <Self as Actor>::Context) {
+    fn hb(&self, ctx: &mut <Self as Actor>::Context) {
         ctx.run_interval(constants::HEARTBEAT_INTERVAL, |act, ctx| {
             if Instant::now().duration_since(act.hb) >= constants::CLIENT_TIMEOUT {
                 println!("Websocket Client heartbeat failed, disconnecting!");
@@ -61,31 +65,16 @@ impl LabSocket {
     }
 
     fn subscribe_lab(&self, ctx: &mut <Self as Actor>::Context) {
-        let mut connection = Arc::clone(&self.pool)
-            .get_connection()
-            .expect("redis connection error");
-        // let key = format!("lab_message:{}", uid);
-        let keys = vec![self.key.clone()];
-        let opts = StreamReadOptions::default();
-        // Oldest known time index
-        let starting_id = "0-0";
-        // Same as above
-        let end_id = "0";
+        ctx.run_interval(constants::HEARTBEAT_STREAM, |act, ctx| {
+            for StreamKey { key: _, ids } in &act.srr.keys {
+                let messages: Vec<LabMessage> =
+                    ids.iter().map(|item| LabMessage::from(item)).collect();
 
-        let srr: StreamReadReply = connection
-            .xread_options(&keys, &[starting_id, end_id, starting_id], opts)
-            .expect("read");
-
-        for StreamKey { key, ids } in srr.keys {
-            let messages: Vec<LabMessage> = ids
-                .iter()
-                .map(|item| item.get::<LabMessage>(&key).unwrap())
-                .collect();
-
-            for message in messages {
-                ctx.text(message);
+                for message in messages {
+                    ctx.text(serde_json::to_string(&message).unwrap());
+                }
             }
-        }
+        });
     }
 }
 
@@ -93,7 +82,8 @@ impl Actor for LabSocket {
     type Context = ws::WebsocketContext<Self>;
 
     fn started(&mut self, ctx: &mut Self::Context) {
-        self.heart_beat(ctx);
+        //cancel heart beat for now
+        // self.hb(ctx);
         self.subscribe_lab(ctx);
     }
 }
@@ -117,5 +107,16 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for LabSocket {
             }
             _ => ctx.stop(),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use crate::tests::helpers::tests::assert_get;
+
+    #[actix_rt::test]
+    async fn test_socket_connect() {
+        assert_get("ws://localhost:3000/ws/lab").await;
     }
 }
