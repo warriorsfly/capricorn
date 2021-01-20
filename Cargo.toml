@@ -11,5 +11,5 @@ members = [
     #共用工具
     # "capricorn-tools",
     # 主程序
-    "capricorn-lab",
+    "capricorn-web",
 ]

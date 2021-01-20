@@ -13,7 +13,7 @@ use redis::{
 
 use std::{sync::Arc, time::Instant};
 
-pub async fn ws_lab_index(
+pub async fn ws_index(
     req: HttpRequest,
     pool: Data<RedisPool>,
     // claims: Data<Claims>,
@@ -64,7 +64,7 @@ impl LabSocket {
         });
     }
 
-    fn subscribe_lab(&self, ctx: &mut <Self as Actor>::Context) {
+    fn consume_socket(&self, ctx: &mut <Self as Actor>::Context) {
         ctx.run_interval(constants::HEARTBEAT_STREAM, |act, ctx| {
             for StreamKey { key: _, ids } in &act.srr.keys {
                 let messages: Vec<LabMessage> =
@@ -84,7 +84,7 @@ impl Actor for LabSocket {
     fn started(&mut self, ctx: &mut Self::Context) {
         //cancel heart beat for now
         // self.hb(ctx);
-        self.subscribe_lab(ctx);
+        self.consume_socket(ctx);
     }
 }
 

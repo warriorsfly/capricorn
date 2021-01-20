@@ -20,5 +20,5 @@ pub fn routes(cfg: &mut web::ServiceConfig) {
                                          // .route("", web::get().to(get_users))
             ),
     )
-    .service(web::scope("/ws").route("/lab", web::get().to(handlers::lab::ws_lab_index)));
+    .service(web::scope("/ws").route("/lab", web::get().to(handlers::websocket::ws_index)));
 }
