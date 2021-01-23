@@ -6,7 +6,7 @@ pub const AUTHORIZATION: &str = "Authorization";
 /// js toISOString() in test suit can't handle chrono's default precision
 pub const DATE_FORMAT: &str = "%Y-%m-%dT%H:%M:%S%.3fZ";
 
-pub const KEY_LAB_MESSAGE: &str = "lab_message";
+pub const KEY_COLLAB_MESSAGE: &str = "collab_message";
 
 /// ignore routes
 pub const IGNORE_ROUTES: [&str; 3] = ["/api/ping", "/api/auth/signup", "/api/auth/login"];

@@ -4,9 +4,9 @@ use diesel::{
     r2d2::{ConnectionManager, Pool, PoolError},
     PgConnection,
 };
-
 use redis::{Client, RedisResult};
 
+pub mod cache;
 /// Database connection pool
 pub type DatabasePool = Pool<ConnectionManager<PgConnection>>;
 

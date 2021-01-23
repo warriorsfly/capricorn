@@ -1,17 +1,20 @@
-use crate::{constants, datasource::RedisPool, schemas::lab::LabMessage, utils::jwt::Claims};
-use actix::prelude::*;
+use crate::{
+    constants,
+    datasource::{cache::xread_opts, RedisPool},
+    schemas::lab::LabMessage,
+    utils::jwt::Claims,
+};
 use actix::Actor;
+use actix::{clock::interval, prelude::*};
 use actix_web::{
     web::{self, Data},
     Error, HttpRequest, HttpResponse,
 };
 use actix_web_actors::ws;
-use redis::{
-    streams::{StreamId, StreamKey, StreamRangeReply, StreamReadOptions, StreamReadReply},
-    Commands, Value,
-};
 
-use std::{sync::Arc, time::Instant};
+use redis::{streams::StreamKey, Commands, Connection};
+
+use std::time::Instant;
 
 pub async fn ws_index(
     req: HttpRequest,
@@ -31,24 +34,14 @@ pub async fn ws_index(
 struct LabSocket {
     /// Client must send ping at least once per 10 seconds (CLIENT_TIMEOUT),
     /// otherwise we drop connection.
-    srr: StreamReadReply,
+    redis_client: &'static RedisPool,
     hb: Instant,
 }
 
 impl LabSocket {
-    fn new(pool: &RedisPool) -> Self {
-        let mut connection = pool.get_connection().expect("redis connection error");
-        // let key = format!("lab_message:{}", uid);
-        let keys = vec!["lab-message"];
-        let opts = StreamReadOptions::default();
-        // Oldest known time index
-        let start = "$";
-        let srr: StreamReadReply = connection
-            .xread_options(&keys, &[start], opts)
-            // .xread_options(&keys, &[starting_id], opts)
-            .expect("read");
+    fn new(pool: &'static RedisPool) -> Self {
         Self {
-            srr,
+            redis_client: pool,
             hb: Instant::now(),
         }
     }
@@ -64,9 +57,11 @@ impl LabSocket {
         });
     }
 
-    fn consume_socket(&self, ctx: &mut <Self as Actor>::Context) {
+    fn get_unread_messages(&self, ctx: &mut <Self as Actor>::Context) {
         ctx.run_interval(constants::HEARTBEAT_STREAM, |act, ctx| {
-            for StreamKey { key: _, ids } in &act.srr.keys {
+            let mut con = self.redis_client.get_connection().expect("read");
+            let ssr = xread_opts(&con, constants::KEY_COLLAB_MESSAGE, "0", "0").await;
+            for StreamKey { key: _, ids } in srr.keys {
                 let messages: Vec<LabMessage> =
                     ids.iter().map(|item| LabMessage::from(item)).collect();
 
@@ -84,7 +79,7 @@ impl Actor for LabSocket {
     fn started(&mut self, ctx: &mut Self::Context) {
         //cancel heart beat for now
         // self.hb(ctx);
-        self.consume_socket(ctx);
+        self.get_unread_messages(ctx);
     }
 }
 

@@ -1,6 +1,7 @@
 [workspace]
 members = [
     # 邮件服务
+    "capricorn-ml",
     # "capricorn-email",
     #统一用户认证
     # "capricorn-identity",
