@@ -19,6 +19,6 @@ pub fn routes(cfg: &mut web::ServiceConfig) {
                                          // .route("/{id}", web::delete().to(delete_user))
                                          // .route("", web::get().to(get_users))
             ),
-    )
-    .service(web::scope("/ws").route("/lab", web::get().to(handlers::notify::ws_index)));
+    );
+    // .service(web::scope("/ws").route("/lab", web::get().to(handlers::notify::ws_login)));
 }

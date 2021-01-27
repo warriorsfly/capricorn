@@ -2,13 +2,15 @@ use crate::{
     awc::add_awc,
     config::CONFIG,
     datasource::{add_pool, add_redis},
+    // middlewares,
     routes::routes,
 };
 
 use actix_web::{
-    http::header,
+    // http::header,
     middleware::{Compress, Logger},
-    App, HttpServer,
+    App,
+    HttpServer,
 };
 
 pub async fn serv() -> std::io::Result<()> {

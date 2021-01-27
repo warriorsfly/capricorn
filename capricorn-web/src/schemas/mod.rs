@@ -1,3 +1,3 @@
-pub mod lab;
+pub mod chat;
 pub mod provider;
 pub mod service;

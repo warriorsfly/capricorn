@@ -9,6 +9,7 @@ mod config;
 mod constants;
 mod datasource;
 mod handlers;
+mod lab_socket;
 mod middlewares;
 mod routes;
 mod schema;
