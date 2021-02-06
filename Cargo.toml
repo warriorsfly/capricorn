@@ -4,6 +4,8 @@ members = [
 
     "capricorn-email",
     "capricorn-ml",
+    #实时通信系统
+    "capricorn-rtc",
     #统一用户认证
     # "capricorn-identity",
     # 定义使用的rpc
