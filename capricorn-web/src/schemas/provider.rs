@@ -1,4 +1,4 @@
-use super::{root::DataSource, service_application::ServiceApplication};
+use super::{root::DataSource, serv_app::ServApp};
 use crate::schema::*;
 use chrono::{DateTime, Utc};
 use diesel::prelude::*;
@@ -37,13 +37,13 @@ impl ServiceProvider {
         &self.avatar
     }
 
-    fn applications(&self, ctx: &DataSource) -> FieldResult<Vec<ServiceApplication>> {
+    fn applications(&self, ctx: &DataSource) -> FieldResult<Vec<ServApp>> {
         use crate::schema::service_applications::dsl::*;
         let conn = ctx.database.get()?;
 
         let apps = service_applications
             .filter(provider.eq(self.id))
-            .load::<ServiceApplication>(&conn)?;
+            .load::<ServApp>(&conn)?;
         Ok(apps)
     }
 }

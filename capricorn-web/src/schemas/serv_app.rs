@@ -5,7 +5,7 @@ use juniper::graphql_object;
 use serde::{Deserialize, Serialize};
 use uuid;
 #[derive(Debug, Deserialize, Queryable, Identifiable, PartialEq, Serialize)]
-pub struct ServiceApplication {
+pub struct ServApp {
     pub id: uuid::Uuid,
     pub provider: i32,
     pub slug: String,
@@ -20,7 +20,7 @@ pub struct ServiceApplication {
 }
 
 #[graphql_object(Context = DataSource)]
-impl ServiceApplication {
+impl ServApp {
     fn id(&self) -> String {
         (&self.id.to_simple().to_string()).to_owned()
     }

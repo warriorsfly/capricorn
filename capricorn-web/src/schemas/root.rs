@@ -2,7 +2,7 @@ use crate::{database::DatabasePool, schema::*};
 use diesel::prelude::*;
 use juniper::{graphql_object, EmptyMutation, EmptySubscription, FieldResult, RootNode};
 
-use super::service_provider::ServiceProvider;
+use super::provider::ServiceProvider;
 pub struct DataSource {
     pub database: DatabasePool,
 }
