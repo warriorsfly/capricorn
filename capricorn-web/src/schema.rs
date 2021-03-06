@@ -1,5 +1,5 @@
 table! {
-    service_applications (id) {
+    functions (id) {
         id -> Uuid,
         provider -> Int4,
         slug -> Text,
@@ -15,7 +15,7 @@ table! {
 }
 
 table! {
-    service_providers (id) {
+    providers (id) {
         id -> Int4,
         name -> Varchar,
         email -> Varchar,
@@ -27,9 +27,6 @@ table! {
     }
 }
 
-joinable!(service_applications -> service_providers (provider));
+joinable!(functions -> providers (provider));
 
-allow_tables_to_appear_in_same_query!(
-    service_applications,
-    service_providers,
-);
+allow_tables_to_appear_in_same_query!(functions, providers,);

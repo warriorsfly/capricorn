@@ -1,10 +1,10 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE service_applications
+CREATE TABLE functions
 (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     -- belong to user
-    provider int NOT NULL REFERENCES service_providers (id),
+    provider int NOT NULL REFERENCES providers (id),
     slug TEXT UNIQUE NOT NULL,
     -- application name
     name TEXT NOT NULL,
@@ -23,5 +23,5 @@ CREATE TABLE service_applications
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX applications_provider_id_idx ON service_applications (provider);
-SELECT diesel_manage_updated_at('service_applications');
+CREATE INDEX applications_provider_id_idx ON functions (provider);
+SELECT diesel_manage_updated_at('functions');

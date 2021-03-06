@@ -1,4 +1,4 @@
-use super::{root::DataSource, serv_app::ServApp};
+use super::{function::Function, root::DataSource};
 use crate::schema::*;
 use chrono::{DateTime, Utc};
 use diesel::prelude::*;
@@ -6,7 +6,7 @@ use juniper::{graphql_object, FieldResult};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Queryable, Identifiable, PartialEq, Serialize)]
-pub struct ServiceProvider {
+pub struct Provider {
     pub id: i32,
     pub name: String,
     pub email: String,
@@ -20,7 +20,7 @@ pub struct ServiceProvider {
 }
 
 #[graphql_object(Context = DataSource)]
-impl ServiceProvider {
+impl Provider {
     fn id(&self) -> &i32 {
         &self.id
     }
@@ -37,19 +37,19 @@ impl ServiceProvider {
         &self.avatar
     }
 
-    fn applications(&self, ctx: &DataSource) -> FieldResult<Vec<ServApp>> {
-        use crate::schema::service_applications::dsl::*;
+    fn functions(&self, ctx: &DataSource) -> FieldResult<Vec<Function>> {
+        use crate::schema::functions::dsl::*;
         let conn = ctx.database.get()?;
 
-        let apps = service_applications
+        let apps = functions
             .filter(provider.eq(self.id))
-            .load::<ServApp>(&conn)?;
+            .load::<Function>(&conn)?;
         Ok(apps)
     }
 }
 
 #[derive(Debug, Insertable)]
-#[table_name = "service_providers"]
+#[table_name = "providers"]
 pub struct ProviderInput<'a> {
     pub name: &'a str,
     pub email: &'a str,
