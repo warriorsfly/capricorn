@@ -2,7 +2,7 @@ use actix::Actor;
 use std::sync::{atomic::AtomicUsize, Arc};
 
 use actix_files as fs;
-use actix_web::{web, App, HttpResponse, HttpServer};
+use actix_web::{middleware::Logger, web, App, HttpResponse, HttpServer};
 
 use crate::{
     handlers::{get_count, socket_route},
@@ -17,6 +17,7 @@ pub async fn serv() -> std::io::Result<()> {
     // Create Http server with websocket support
     HttpServer::new(move || {
         App::new()
+            .wrap(Logger::default())
             .data(app_state.clone())
             .data(server.clone())
             // redirect to websocket.html
