@@ -12,13 +12,13 @@ use crate::{session::WsSession, socket};
 pub async fn socket_route(
     req: HttpRequest,
     stream: web::Payload,
-    srv: web::Data<Addr<socket::CapricornServer>>,
+    srv: web::Data<Addr<socket::Server>>,
 ) -> Result<HttpResponse, Error> {
     ws::start(
         WsSession {
             id: 0,
             hb: Instant::now(),
-            room: "Main".to_owned(),
+            room: "Clients".to_owned(),
             name: None,
             addr: srv.get_ref().clone(),
         },

@@ -1,11 +1,7 @@
-use std::sync::{
-    atomic::{AtomicUsize, Ordering},
-    Arc,
-};
 use std::time::{Duration, Instant};
 
 use actix::*;
-use actix_web::{web, Error, HttpRequest, HttpResponse, Responder};
+
 use actix_web_actors::ws;
 
 use crate::socket;
@@ -14,31 +10,6 @@ use crate::socket;
 const HEARTBEAT_INTERVAL: Duration = Duration::from_secs(5);
 /// How long before lack of client response causes a timeout
 const CLIENT_TIMEOUT: Duration = Duration::from_secs(10);
-
-/// Entry point for our websocket route
-async fn chat_route(
-    req: HttpRequest,
-    stream: web::Payload,
-    srv: web::Data<Addr<socket::CapricornServer>>,
-) -> Result<HttpResponse, Error> {
-    ws::start(
-        WsSession {
-            id: 0,
-            hb: Instant::now(),
-            room: "Main".to_owned(),
-            name: None,
-            addr: srv.get_ref().clone(),
-        },
-        &req,
-        stream,
-    )
-}
-
-///  Displays and affects state
-async fn get_count(count: web::Data<Arc<AtomicUsize>>) -> impl Responder {
-    let current_count = count.fetch_add(1, Ordering::SeqCst);
-    format!("Visitors: {}", current_count)
-}
 
 pub struct WsSession {
     /// unique session id
@@ -51,7 +22,7 @@ pub struct WsSession {
     /// peer name
     pub name: Option<String>,
     /// Chat server
-    pub addr: Addr<socket::CapricornServer>,
+    pub addr: Addr<socket::Server>,
 }
 
 impl Actor for WsSession {
