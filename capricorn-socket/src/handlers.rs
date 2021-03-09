@@ -7,12 +7,12 @@ use std::sync::{
 };
 use std::time::Instant;
 
-use crate::{session::WsSession, socket};
+use crate::{lab, session::WsSession};
 
 pub async fn socket_route(
     req: HttpRequest,
     stream: web::Payload,
-    srv: web::Data<Addr<socket::Server>>,
+    srv: web::Data<Addr<lab::Lab>>,
 ) -> Result<HttpResponse, Error> {
     ws::start(
         WsSession {

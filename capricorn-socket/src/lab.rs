@@ -48,7 +48,7 @@ pub struct CMessage {
     pub room: String,
 }
 
-impl Handler<CMessage> for Server {
+impl Handler<CMessage> for Lab {
     type Result = ();
 
     fn handle(&mut self, msg: CMessage, _: &mut Self::Context) -> Self::Result {
@@ -56,14 +56,14 @@ impl Handler<CMessage> for Server {
     }
 }
 
-pub struct Server {
+pub struct Lab {
     sessions: HashMap<usize, Recipient<Message>>,
     rooms: HashMap<String, HashSet<usize>>,
     rng: ThreadRng,
     visitor_count: Arc<AtomicUsize>,
 }
 
-impl Server {
+impl Lab {
     pub fn new(visitor_count: Arc<AtomicUsize>) -> Self {
         let mut rooms = HashMap::new();
         rooms.insert("Clients".to_owned(), HashSet::new());
@@ -76,7 +76,7 @@ impl Server {
     }
 }
 
-impl Server {
+impl Lab {
     /// send message to room
     fn send_message(&self, room: &str, message: &str, skip_id: usize) {
         if let Some(sessions) = self.rooms.get(room) {
@@ -98,11 +98,11 @@ impl Server {
     }
 }
 
-impl Actor for Server {
+impl Actor for Lab {
     type Context = Context<Self>;
 }
 
-impl Handler<Connect> for Server {
+impl Handler<Connect> for Lab {
     type Result = usize;
 
     fn handle(&mut self, msg: Connect, _: &mut Self::Context) -> Self::Result {
@@ -119,7 +119,7 @@ impl Handler<Connect> for Server {
     }
 }
 
-impl Handler<Disconnect> for Server {
+impl Handler<Disconnect> for Lab {
     type Result = ();
 
     fn handle(&mut self, msg: Disconnect, _: &mut Self::Context) -> Self::Result {

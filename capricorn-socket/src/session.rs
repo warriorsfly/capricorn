@@ -4,7 +4,7 @@ use actix::*;
 
 use actix_web_actors::ws;
 
-use crate::socket;
+use crate::lab;
 
 /// How often heartbeat pings are sent
 const HEARTBEAT_INTERVAL: Duration = Duration::from_secs(5);
@@ -22,7 +22,7 @@ pub struct WsSession {
     /// peer name
     pub name: Option<String>,
     /// Chat server
-    pub addr: Addr<socket::Server>,
+    pub addr: Addr<lab::Lab>,
 }
 
 impl Actor for WsSession {
@@ -41,7 +41,7 @@ impl Actor for WsSession {
         // across all routes within application
         let addr = ctx.address();
         self.addr
-            .send(socket::Connect {
+            .send(lab::Connect {
                 addr: addr.recipient(),
             })
             .into_actor(self)
@@ -58,16 +58,16 @@ impl Actor for WsSession {
 
     fn stopping(&mut self, _: &mut Self::Context) -> Running {
         // notify chat server
-        self.addr.do_send(socket::Disconnect { id: self.id });
+        self.addr.do_send(lab::Disconnect { id: self.id });
         Running::Stop
     }
 }
 
 /// Handle messages from chat server, we simply send it to peer websocket
-impl Handler<socket::Message> for WsSession {
+impl Handler<lab::Message> for WsSession {
     type Result = ();
 
-    fn handle(&mut self, msg: socket::Message, ctx: &mut Self::Context) {
+    fn handle(&mut self, msg: lab::Message, ctx: &mut Self::Context) {
         ctx.text(msg.0);
     }
 }
@@ -150,7 +150,7 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsSession {
                         m.to_owned()
                     };
                     // send message to chat server
-                    self.addr.do_send(socket::CMessage {
+                    self.addr.do_send(lab::CMessage {
                         id: self.id,
                         msg,
                         room: self.room.clone(),
@@ -182,7 +182,7 @@ impl WsSession {
                 println!("Websocket Client heartbeat failed, disconnecting!");
 
                 // notify chat server
-                act.addr.do_send(socket::Disconnect { id: act.id });
+                act.addr.do_send(lab::Disconnect { id: act.id });
 
                 // stop actor
                 ctx.stop();

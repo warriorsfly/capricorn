@@ -6,13 +6,13 @@ use actix_web::{web, App, HttpResponse, HttpServer};
 
 use crate::{
     handlers::{get_count, socket_route},
-    socket,
+    lab,
 };
 
 pub async fn serv() -> std::io::Result<()> {
     let app_state = Arc::new(AtomicUsize::new(0));
     // Start chat server actor
-    let server = socket::Server::new(app_state.clone()).start();
+    let server = lab::Lab::new(app_state.clone()).start();
 
     // Create Http server with websocket support
     HttpServer::new(move || {
