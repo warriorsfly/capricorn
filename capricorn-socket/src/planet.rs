@@ -4,12 +4,9 @@
 use actix::prelude::*;
 use rand::{self, rngs::ThreadRng, Rng};
 
-use std::{
-    borrow::Borrow,
-    sync::{
-        atomic::{AtomicUsize, Ordering},
-        Arc,
-    },
+use std::sync::{
+    atomic::{AtomicUsize, Ordering},
+    Arc,
 };
 
 use std::collections::{HashMap, HashSet};
@@ -48,7 +45,7 @@ pub struct CMessage {
     pub room: String,
 }
 
-impl Handler<CMessage> for Lab {
+impl Handler<CMessage> for Moon {
     type Result = ();
 
     fn handle(&mut self, msg: CMessage, _: &mut Self::Context) -> Self::Result {
@@ -56,14 +53,14 @@ impl Handler<CMessage> for Lab {
     }
 }
 
-pub struct Lab {
+pub struct Moon {
     sessions: HashMap<usize, Recipient<Message>>,
     rooms: HashMap<String, HashSet<usize>>,
     rng: ThreadRng,
     visitor_count: Arc<AtomicUsize>,
 }
 
-impl Lab {
+impl Moon {
     pub fn new(visitor_count: Arc<AtomicUsize>) -> Self {
         let mut rooms = HashMap::new();
         rooms.insert("Clients".to_owned(), HashSet::new());
@@ -76,7 +73,7 @@ impl Lab {
     }
 }
 
-impl Lab {
+impl Moon {
     /// send message to room
     fn send_message(&self, room: &str, message: &str, skip_id: usize) {
         if let Some(sessions) = self.rooms.get(room) {
@@ -98,11 +95,11 @@ impl Lab {
     }
 }
 
-impl Actor for Lab {
+impl Actor for Moon {
     type Context = Context<Self>;
 }
 
-impl Handler<Connect> for Lab {
+impl Handler<Connect> for Moon {
     type Result = usize;
 
     fn handle(&mut self, msg: Connect, _: &mut Self::Context) -> Self::Result {
@@ -119,7 +116,7 @@ impl Handler<Connect> for Lab {
     }
 }
 
-impl Handler<Disconnect> for Lab {
+impl Handler<Disconnect> for Moon {
     type Result = ();
 
     fn handle(&mut self, msg: Disconnect, _: &mut Self::Context) -> Self::Result {

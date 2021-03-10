@@ -3,7 +3,7 @@ use server::serv;
 mod handlers;
 mod message;
 // mod route;
-mod lab;
+mod planet;
 mod server;
 mod session;
 
