@@ -2,8 +2,9 @@
 members = [
     # 定义使用的rpc
     "capricorn-rpc",
-    # 自定义使用socket
-    "capricorn-socket",
+  
     # 主程序
     "capricorn-web",
+    # 自定义使用socket
+    "moon",
 ]

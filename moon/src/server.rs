@@ -6,13 +6,13 @@ use actix_web::{middleware::Logger, web, App, HttpResponse, HttpServer};
 
 use crate::{
     handlers::{get_count, socket_route},
-    planet,
+    moon,
 };
 
 pub async fn serv() -> std::io::Result<()> {
     let app_state = Arc::new(AtomicUsize::new(0));
-    // Start chat server actor
-    let server = planet::Moon::new(app_state.clone()).start();
+    // Start planet server actor
+    let server = moon::Moon::new(app_state.clone()).start();
 
     // Create Http server with websocket support
     HttpServer::new(move || {

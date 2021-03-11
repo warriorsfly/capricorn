@@ -4,7 +4,7 @@ use actix::*;
 
 use actix_web_actors::ws;
 
-use crate::planet;
+use crate::moon;
 
 /// How often heartbeat pings are sent
 const HEARTBEAT_INTERVAL: Duration = Duration::from_secs(5);
@@ -22,7 +22,7 @@ pub struct WsSession {
     /// peer name
     pub name: Option<String>,
     /// Chat server
-    pub addr: Addr<planet::Moon>,
+    pub addr: Addr<moon::Moon>,
 }
 
 impl Actor for WsSession {
@@ -34,21 +34,21 @@ impl Actor for WsSession {
         // we'll start heartbeat process on session start.
         self.hb(ctx);
 
-        // register self in chat server. `AsyncContext::wait` register
+        // register self in planet server. `AsyncContext::wait` register
         // future within context, but context waits until this future resolves
         // before processing any other events.
         // HttpContext::state() is instance of WsChatSessionState, state is shared
         // across all routes within application
         let addr = ctx.address();
         self.addr
-            .send(planet::Connect {
+            .send(moon::Connect {
                 addr: addr.recipient(),
             })
             .into_actor(self)
             .then(|res, act, ctx| {
                 match res {
                     Ok(res) => act.id = res,
-                    // something is wrong with chat server
+                    // something is wrong with planet server
                     _ => ctx.stop(),
                 }
                 fut::ready(())
@@ -57,17 +57,17 @@ impl Actor for WsSession {
     }
 
     fn stopping(&mut self, _: &mut Self::Context) -> Running {
-        // notify chat server
-        self.addr.do_send(planet::Disconnect { id: self.id });
+        // notify planet server
+        self.addr.do_send(moon::Disconnect { id: self.id });
         Running::Stop
     }
 }
 
-/// Handle messages from chat server, we simply send it to peer websocket
-impl Handler<planet::Message> for WsSession {
+/// Handle messages from planet server, we simply send it to peer websocket
+impl Handler<moon::Message> for WsSession {
     type Result = ();
 
-    fn handle(&mut self, msg: planet::Message, ctx: &mut Self::Context) {
+    fn handle(&mut self, msg: moon::Message, ctx: &mut Self::Context) {
         ctx.text(msg.0);
     }
 }
@@ -99,7 +99,7 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsSession {
                     let v: Vec<&str> = m.splitn(2, ' ').collect();
                     match v[0] {
                         // "/list" => {
-                        //     // Send ListRooms message to chat server and wait for
+                        //     // Send ListRooms message to planet server and wait for
                         //     // response
                         //     println!("List rooms");
                         //     self.addr
@@ -149,8 +149,8 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsSession {
                     } else {
                         m.to_owned()
                     };
-                    // send message to chat server
-                    self.addr.do_send(planet::CMessage {
+                    // send message to planet server
+                    self.addr.do_send(moon::LightMessage {
                         id: self.id,
                         msg,
                         room: self.room.clone(),
@@ -181,8 +181,8 @@ impl WsSession {
                 // heartbeat timed out
                 println!("Websocket Client heartbeat failed, disconnecting!");
 
-                // notify chat server
-                act.addr.do_send(planet::Disconnect { id: act.id });
+                // notify planet server
+                act.addr.do_send(moon::Disconnect { id: act.id });
 
                 // stop actor
                 ctx.stop();

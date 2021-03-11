@@ -7,12 +7,12 @@ use std::sync::{
 };
 use std::time::Instant;
 
-use crate::{planet, session::WsSession};
+use crate::{moon, session::WsSession};
 
 pub async fn socket_route(
     req: HttpRequest,
     stream: web::Payload,
-    srv: web::Data<Addr<planet::Moon>>,
+    srv: web::Data<Addr<moon::Moon>>,
 ) -> Result<HttpResponse, Error> {
     ws::start(
         WsSession {

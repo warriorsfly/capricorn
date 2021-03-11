@@ -27,16 +27,16 @@ pub struct Disconnect {
     pub id: usize,
 }
 
-#[derive(Message)]
-#[rtype(result = "()")]
-pub struct Notification {
-    pub id: usize,
-    pub msg: String,
-}
+// #[derive(Message)]
+// #[rtype(result = "()")]
+// pub struct Notification {
+//     pub id: usize,
+//     pub msg: String,
+// }
 
 #[derive(Message)]
 #[rtype(result = "()")]
-pub struct CMessage {
+pub struct LightMessage {
     /// id of client session
     pub id: usize,
     /// Peer message
@@ -45,10 +45,10 @@ pub struct CMessage {
     pub room: String,
 }
 
-impl Handler<CMessage> for Moon {
+impl Handler<LightMessage> for Moon {
     type Result = ();
 
-    fn handle(&mut self, msg: CMessage, _: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: LightMessage, _: &mut Self::Context) -> Self::Result {
         self.send_message(&msg.room, msg.msg.as_str(), msg.id);
     }
 }
@@ -62,11 +62,11 @@ pub struct Moon {
 
 impl Moon {
     pub fn new(visitor_count: Arc<AtomicUsize>) -> Self {
-        let mut rooms = HashMap::new();
-        rooms.insert("Clients".to_owned(), HashSet::new());
+        // let mut rooms = HashMap::new();
+        // rooms.insert("Clients".to_owned(), HashSet::new());
         Self {
             sessions: HashMap::new(),
-            rooms,
+            rooms: HashMap::new(),
             rng: rand::thread_rng(),
             visitor_count,
         }
@@ -84,13 +84,6 @@ impl Moon {
                     }
                 }
             }
-        }
-    }
-
-    /// send notification to user
-    fn send_notification(&self, id: usize, message: &str) {
-        if let Some(addr) = self.sessions.get(&id) {
-            let _ = addr.do_send(Message(message.to_owned()));
         }
     }
 }
